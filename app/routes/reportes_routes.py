@@ -12,6 +12,30 @@ from app.services.analysis_service import (
     AnalysisService
 )
 
+from app.models.resultado_analisis import (
+    ResultadoAnalisis
+)
+
+from app.models.respuesta_alumno import (
+    RespuestaAlumno
+)
+
+from app.models.examen_alumno import (
+    ExamenAlumno
+)
+
+from app.models.estudiante import (
+    Estudiante
+)
+
+from flask_login import (
+    login_required
+)
+
+from app.services.role_required_service import (
+    role_required
+)
+
 
 resultados_bp = Blueprint(
 
@@ -21,6 +45,32 @@ resultados_bp = Blueprint(
 
     url_prefix='/reportes'
 )
+
+
+# =========================================================
+# LISTA DE REPORTES
+# =========================================================
+
+@resultados_bp.route(
+    '/',
+    methods=['GET']
+)
+@login_required
+@role_required('administrador', 'docente')
+def lista_reportes():
+
+    resultados = (
+        ResultadoAnalisis
+        .query
+        .order_by(ResultadoAnalisis.id.desc())
+        .limit(100)
+        .all()
+    )
+
+    return render_template(
+        'reportes/reportes.html',
+        resultados=resultados
+    )
 
 
 # =========================================================

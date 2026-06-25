@@ -800,6 +800,10 @@ def generar_pdf(resultado_id):
             url_for('resultados.historial_resultados')
         )
 
+    import os
+
+    os.makedirs('reportes', exist_ok=True)
+
     ruta_pdf = f'reportes/reporte_{resultado.id}.pdf'
 
     PDFReportService.generar_reporte(
@@ -807,7 +811,11 @@ def generar_pdf(resultado_id):
         ruta_pdf=ruta_pdf
     )
 
-    return send_file(ruta_pdf, as_attachment=True)
+    return send_file(
+        ruta_pdf,
+        as_attachment=True,
+        download_name=f'reporte_alumno_{resultado.id}.pdf'
+    )
 
 
 # =========================================================
