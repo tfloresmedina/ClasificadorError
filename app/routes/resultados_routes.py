@@ -802,9 +802,13 @@ def generar_pdf(resultado_id):
 
     import os
 
-    os.makedirs('reportes', exist_ok=True)
+    base_dir = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), '..', '..', 'reportes')
+    )
 
-    ruta_pdf = f'reportes/reporte_{resultado.id}.pdf'
+    os.makedirs(base_dir, exist_ok=True)
+
+    ruta_pdf = os.path.join(base_dir, f'reporte_{resultado.id}.pdf')
 
     PDFReportService.generar_reporte(
         resultado=resultado,
