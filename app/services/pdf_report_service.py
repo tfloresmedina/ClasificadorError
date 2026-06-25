@@ -73,7 +73,7 @@ class PDFReportService:
 
             'Reporte generado automáticamente '
             'por el sistema inteligente '
-            'de análisis matemático TAMARA.',
+            'de análisis matemático I.E Elvira García Y García.',
 
             estilos['BodyText']
         )
