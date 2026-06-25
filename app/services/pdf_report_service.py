@@ -49,7 +49,7 @@ class PDFReportService:
 
         titulo = Paragraph(
 
-            'Reporte Inteligente TAMARA',
+            'I.E Elvira García y García',
 
             estilos['Title']
         )
@@ -236,7 +236,7 @@ class PDFReportService:
 
         pie = Paragraph(
 
-            'Sistema Inteligente TAMARA - '
+            'I.E Elvira García y García - '
             'Reporte generado automáticamente.',
 
             estilos['Italic']
