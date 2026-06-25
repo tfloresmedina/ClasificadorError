@@ -1,0 +1,1327 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-4">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-4">
+
+        <h1 class="fw-bold text-primary">
+
+            <i class="bi bi-cpu"></i>
+
+            Resultado del análisis inteligente
+
+        </h1>
+
+        <p class="text-muted">
+
+            Análisis algebraico, métricas pedagógicas
+            y recomendaciones generadas automáticamente.
+
+        </p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ESTADO GENERAL -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+
+            {% if resultado.correcto %}
+
+                <div class="alert alert-success">
+
+                    <h4 class="fw-bold">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        Respuesta Correcta
+
+                    </h4>
+
+                    <p class="mb-0">
+
+                        El procedimiento matemático es válido.
+
+                    </p>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-danger">
+
+                    <h4 class="fw-bold">
+
+                        <i class="bi bi-x-circle-fill"></i>
+
+                        Respuesta Incorrecta
+
+                    </h4>
+
+                    <p class="mb-0">
+
+                        Se detectaron inconsistencias matemáticas.
+
+                    </p>
+                  
+
+                </div>
+
+            {% endif %}
+
+            {% if resultado.requires_teacher_review %}
+
+            <div class="alert alert-warning">
+
+                <h4 class="fw-bold">
+
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+
+                    Revisión Docente Requerida
+
+                </h4>
+
+                <p class="mb-0">
+
+                    {{ resultado.review_reason }}
+
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- CARDS PRINCIPALES -->
+    <!-- ================================================= -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- SCORE -->
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-muted">
+
+                        Score Global
+
+                    </h6>
+
+                    <h2 class="fw-bold text-primary">
+
+                        {{ resultado.score_global }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DIFICULTAD -->
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-muted">
+
+                        Dificultad
+
+                    </h6>
+
+                    <h2 class="fw-bold text-warning">
+
+                        {% if resultado.dificultad == 'alta' %}
+
+                        <span class="badge bg-danger">
+
+                            Alta
+
+                        </span>
+
+                    {% elif resultado.dificultad == 'media' %}
+
+                        <span class="badge bg-warning text-dark">
+
+                            Media
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-success">
+
+                            Baja
+
+                        </span>
+
+                    {% endif %}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIESGO -->
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-muted">
+
+                        Riesgo
+
+                    </h6>
+
+                    <h2 class="fw-bold text-danger">
+
+                        {% if resultado.riesgo == 'alto' %}
+
+                            <span class="badge bg-danger">
+
+                                Alto
+
+                            </span>
+
+                        {% elif resultado.riesgo == 'medio' %}
+
+                            <span class="badge bg-warning text-dark">
+
+                                Medio
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-success">
+
+                                Bajo
+
+                            </span>
+
+                        {% endif %}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TEMA -->
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body text-center">
+
+                    <h6 class="text-muted">
+
+                        Tema Matemático
+
+                    </h6>
+
+                    <h2 class="fw-bold text-success">
+
+                        {{ resultado.tema_matematico }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<!-- ================================================= -->
+<!-- PIPELINE OCR -->
+<!-- ================================================= -->
+
+{% if imagen_original %}
+
+<div class="card shadow-sm border-0 mb-4">
+
+
+    <div class="card-body">
+
+
+        <h4 class="fw-bold mb-3">
+
+            <i class="bi bi-diagram-3"></i>
+
+            Pipeline Inteligente OCR
+
+        </h4>
+
+
+        <p class="text-muted">
+
+            Visualización del procesamiento aplicado
+            por el sistema para mejorar el reconocimiento
+            matemático mediante OCR inteligente.
+
+        </p>
+
+
+        <div class="row g-4 mt-2">
+
+
+            <!-- ===================================== -->
+            <!-- ORIGINAL -->
+            <!-- ===================================== -->
+
+            <div class="col-md-6">
+
+
+                <div class="text-center">
+
+
+                    <h5 class="fw-bold mb-3">
+
+                        Imagen Original
+
+                    </h5>
+
+
+                    <img
+                        src="/{{ imagen_original }}"
+                        class="img-fluid rounded shadow-sm border"
+                    >
+
+
+                    <p class="text-muted mt-2">
+
+                        Captura original subida
+                        por el usuario.
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ===================================== -->
+            <!-- PROCESADA -->
+            <!-- ===================================== -->
+
+            <div class="col-md-6">
+
+
+                <div class="text-center">
+
+
+                    <h5 class="fw-bold mb-3">
+
+                        Imagen Procesada
+
+                    </h5>
+
+
+                    <img
+                        src="/{{ imagen_procesada }}"
+                        class="img-fluid rounded shadow-sm border"
+                    >
+
+
+                    <p class="text-muted mt-2">
+
+                        Imagen optimizada mediante
+                        técnicas de limpieza,
+                        reducción de ruido
+                        y binarización.
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+{% endif %}
+
+    <!-- ================================================= -->
+    <!-- TEXTO OCR -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+
+        <div class="card-body">
+
+
+            <h4 class="fw-bold mb-3">
+
+                <i class="bi bi-file-earmark-text"></i>
+
+                Texto Detectado por OCR
+
+            </h4>
+
+
+            <p class="text-muted">
+
+                El siguiente contenido fue extraído
+                automáticamente desde la imagen
+                procesada por el sistema OCR inteligente.
+
+            </p>
+
+
+            <div class="bg-light p-3 rounded">
+
+
+                <pre class="mb-0">
+
+    {{ texto_ocr }}
+
+                </pre>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    <!-- ================================================= -->
+    <!-- INFORMACIÓN MATEMÁTICA -->
+    <!-- ================================================= -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- EXPRESIONES -->
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+
+                    <h5 class="fw-bold mb-3">
+
+                        <i class="bi bi-calculator"></i>
+
+                        Expresiones Matemáticas
+
+                    </h5>
+
+
+                    <p>
+
+                        <strong>Original:</strong>
+
+                        {{ resultado.expresion_original }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>Normalizada:</strong>
+
+                        {{ resultado.expresion_normalizada }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>Tipo:</strong>
+
+                        {{ resultado.tipo_ejercicio }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>Pasos estimados:</strong>
+
+                        {{ resultado.pasos_estimados }}
+
+                    </p>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+
+                    <h5 class="fw-bold mb-3">
+
+                        <i class="bi bi-exclamation-triangle"></i>
+
+                        Diagnóstico
+
+                    </h5>
+
+
+                    <p>
+
+                        <strong>Error:</strong>
+
+                        {{ resultado.tipo_error }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>Severidad:</strong>
+
+                        {% if resultado.severidad == 'alta' %}
+
+                            <span class="badge bg-danger">
+
+                                Alta
+
+                            </span>
+
+                        {% elif resultado.severidad == 'media' %}
+
+                            <span class="badge bg-warning text-dark">
+
+                                Media
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-success">
+
+                                Baja
+
+                            </span>
+
+                        {% endif %}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>Descripción:</strong>
+
+                        {{ resultado.descripcion }}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>Recomendación:</strong>
+
+                        {{ resultado.recomendacion }}
+
+                    </p>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- PERFIL PEDAGÓGICO -->
+    <!-- ================================================= -->
+
+    <!-- ================================================= -->
+<!-- PERFIL ACADÉMICO -->
+<!-- ================================================= -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+
+    <div class="card-body">
+
+
+        <div class="row align-items-center">
+
+
+            <!-- ===================================== -->
+            <!-- ICONO -->
+            <!-- ===================================== -->
+
+            <div class="col-md-2 text-center">
+
+
+                {% if perfil_academico.color == 'success' %}
+
+                    <i
+                        class="bi bi-emoji-smile"
+                        style="
+                            font-size: 5rem;
+                            color: #16a34a;
+                        "
+                    ></i>
+
+                {% elif perfil_academico.color == 'warning' %}
+
+                    <i
+                        class="bi bi-emoji-neutral"
+                        style="
+                            font-size: 5rem;
+                            color: #ca8a04;
+                        "
+                    ></i>
+
+                {% else %}
+
+                    <i
+                        class="bi bi-emoji-frown"
+                        style="
+                            font-size: 5rem;
+                            color: #dc2626;
+                        "
+                    ></i>
+
+                {% endif %}
+
+
+            </div>
+
+
+            <!-- ===================================== -->
+            <!-- CONTENIDO -->
+            <!-- ===================================== -->
+
+            <div class="col-md-10">
+
+
+                <h3 class="fw-bold mb-3">
+
+                    <i class="bi bi-mortarboard"></i>
+
+                    Perfil Académico Detectado
+
+                </h3>
+
+
+                <p class="text-muted">
+
+                    Interpretación pedagógica generada
+                    automáticamente según el desempeño
+                    matemático detectado durante el análisis.
+
+                </p>
+
+
+                <div class="mb-3">
+
+
+                    <span
+                        class="badge bg-{{ perfil_academico.color }}"
+                        style="
+                            font-size: 1rem;
+                            padding: 10px 18px;
+                        "
+                    >
+
+                        Nivel {{ perfil_academico.nivel }}
+
+                    </span>
+
+
+                </div>
+
+
+                <div class="alert alert-{{ perfil_academico.color }}">
+
+
+                    {{ perfil_academico.descripcion }}
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+    <!-- ================================================= -->
+    <!-- ALERTAS -->
+    <!-- ================================================= -->
+
+    <!-- ================================================= -->
+<!-- ALERTAS ACADÉMICAS -->
+<!-- ================================================= -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+
+    <div class="card-body">
+
+
+        <h4 class="fw-bold mb-4">
+
+            <i class="bi bi-bell"></i>
+
+            Alertas Académicas Inteligentes
+
+        </h4>
+
+
+        <p class="text-muted">
+
+            Detección automática de situaciones
+            académicas relevantes identificadas
+            durante el análisis matemático.
+
+        </p>
+
+
+        <div class="mt-4">
+
+
+            {% for alerta in alertas_academicas %}
+
+
+                <div class="alert alert-{{ alerta.tipo }} shadow-sm">
+
+
+                    <div class="d-flex align-items-start">
+
+
+                        <!-- ICONO -->
+
+                        <div class="me-3">
+
+
+                            {% if alerta.tipo == 'danger' %}
+
+                                <i
+                                    class="bi bi-exclamation-triangle-fill"
+                                    style="
+                                        font-size: 2rem;
+                                    "
+                                ></i>
+
+                            {% elif alerta.tipo == 'warning' %}
+
+                                <i
+                                    class="bi bi-exclamation-circle-fill"
+                                    style="
+                                        font-size: 2rem;
+                                    "
+                                ></i>
+
+                            {% else %}
+
+                                <i
+                                    class="bi bi-check-circle-fill"
+                                    style="
+                                        font-size: 2rem;
+                                    "
+                                ></i>
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                        <!-- CONTENIDO -->
+
+                        <div>
+
+
+                            <h5 class="fw-bold">
+
+                                {{ alerta.titulo }}
+
+                            </h5>
+
+
+                            <p class="mb-0">
+
+                                {{ alerta.descripcion }}
+
+                            </p>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+<!-- ================================================= -->
+<!-- INTERPRETACIÓN CURRICULAR -->
+<!-- ================================================= -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-body">
+
+        <h4 class="fw-bold mb-4">
+
+            <i class="bi bi-journal-check"></i>
+
+            Interpretación Curricular Inteligente
+
+        </h4>
+
+        <p class="text-muted">
+
+            Resultado pedagógico generado automáticamente
+            según el desempeño matemático detectado.
+
+        </p>
+
+        <div class="row g-4 mt-2">
+
+            <!-- COMPETENCIA -->
+
+            <div class="col-md-6">
+
+                <div class="border rounded p-3 h-100 bg-light">
+
+                    <h6 class="fw-bold text-primary">
+
+                        Competencia
+
+                    </h6>
+
+                    <p class="mb-0">
+
+                        {{ resultado.competencia }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- CAPACIDAD -->
+
+            <div class="col-md-6">
+
+                <div class="border rounded p-3 h-100 bg-light">
+
+                    <h6 class="fw-bold text-success">
+
+                        Capacidad Curricular
+
+                    </h6>
+
+                    <p class="mb-0">
+
+                        {{ resultado.capacidad_curricular }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- DESEMPEÑO -->
+
+            <div class="col-md-6">
+
+                <div class="border rounded p-3 h-100 bg-light">
+
+                    <h6 class="fw-bold text-warning">
+
+                        Desempeño Esperado
+
+                    </h6>
+
+                    <p class="mb-0">
+
+                        {{ resultado.desempeno_curricular }}
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- NIVEL -->
+
+            <div class="col-md-6">
+
+                <div class="border rounded p-3 h-100 bg-light">
+
+                    <h6 class="fw-bold text-danger">
+
+                        Nivel de Logro
+
+                    </h6>
+
+                    <p class="mb-0">
+
+                        <span class="badge bg-primary">
+
+                            {{ resultado.nivel_logro }}
+
+                        </span>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RECOMENDACIÓN -->
+
+        <div class="alert alert-info mt-4 mb-0">
+
+            <strong>
+
+                Recomendación Curricular:
+
+            </strong>
+
+            {{ resultado.recomendacion_curricular }}
+
+        </div>
+
+    </div>
+
+</div>
+    <!-- ================================================= -->
+    <!-- PLAN DE REFUERZO -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+
+            <h4 class="fw-bold mb-3">
+
+                <i class="bi bi-lightbulb"></i>
+
+                Plan de Refuerzo
+
+            </h4>
+
+
+            {% if resultado.plan_refuerzo %}
+
+                <ul class="list-group">
+
+
+                    {% for item in resultado.plan_refuerzo %}
+
+                        <li class="list-group-item">
+
+                            {{ item }}
+
+                        </li>
+
+                    {% endfor %}
+
+
+                </ul>
+
+            {% else %}
+
+                <div class="alert alert-info mb-0">
+
+                    No se generaron acciones de refuerzo.
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+<!-- ================================================= -->
+<!-- TIMELINE MATEMÁTICO -->
+<!-- ================================================= -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-body">
+
+        <h4 class="fw-bold mb-4">
+
+            <i class="bi bi-bezier2"></i>
+
+            Timeline del Procedimiento Matemático
+
+        </h4>
+
+        <p class="text-muted">
+
+            Validación secuencial de los pasos
+            matemáticos detectados durante
+            el análisis inteligente.
+
+        </p>
+
+        {% if resultado.detalle_procedimiento %}
+
+            {% for paso in resultado.detalle_procedimiento %}
+
+                <div class="border rounded p-4 mb-3">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+
+                        <h5 class="fw-bold mb-0">
+
+                            Paso {{ loop.index }}
+
+                        </h5>
+
+                        {% if paso.valido %}
+
+                            <span class="badge bg-success">
+
+                                Correcto
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger">
+
+                                Incorrecto
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="row">
+
+                        <!-- EXPRESIÓN 1 -->
+
+                        <div class="col-md-5">
+
+                            <div class="bg-light rounded p-3 text-center">
+
+                                <small class="text-muted">
+
+                                    Expresión Inicial
+
+                                </small>
+
+                                <h5 class="fw-bold mt-2">
+
+                                    {{ paso.expresion_1 }}
+
+                                </h5>
+
+                            </div>
+
+                        </div>
+
+                        <!-- FLECHA -->
+
+                        <div class="col-md-2 d-flex align-items-center justify-content-center">
+
+                            <i
+                                class="bi bi-arrow-right"
+                                style="
+                                    font-size: 2rem;
+                                    color: #2563eb;
+                                "
+                            ></i>
+
+                        </div>
+
+                        <!-- EXPRESIÓN 2 -->
+
+                        <div class="col-md-5">
+
+                            <div class="bg-light rounded p-3 text-center">
+
+                                <small class="text-muted">
+
+                                    Expresión Transformada
+
+                                </small>
+
+                                <h5 class="fw-bold mt-2">
+
+                                    {{ paso.expresion_2 }}
+
+                                </h5>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% if not paso.valido %}
+
+                        <div class="alert alert-danger mt-3 mb-0">
+
+                            <strong>
+
+                                Error Detectado:
+
+                            </strong>
+
+                            {{ paso.error }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="alert alert-info mb-0">
+
+                No se detectaron validaciones
+                secuenciales para este análisis.
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+    <!-- ================================================= -->
+<!-- PIPELINE INTELIGENTE -->
+<!-- ================================================= -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+
+    <div class="card-body">
+
+
+        <h4 class="fw-bold mb-4">
+
+            <i class="bi bi-diagram-3"></i>
+
+            Pipeline Inteligente del Sistema
+
+        </h4>
+
+
+        <p class="text-muted">
+
+            Flujo interno ejecutado automáticamente
+            por el sistema inteligente para analizar,
+            validar y clasificar procedimientos
+            matemáticos.
+
+        </p>
+
+
+        <div class="timeline mt-4">
+
+
+            {% for paso in trace_pipeline %}
+
+
+                <div class="d-flex mb-4">
+
+
+                    <!-- ICONO -->
+
+                    <div class="me-4">
+
+
+                        <div
+                            class="rounded-circle d-flex align-items-center justify-content-center"
+                            style="
+                                width: 55px;
+                                height: 55px;
+                                background: #2563eb;
+                                color: white;
+                                font-size: 1.2rem;
+                            "
+                        >
+
+                            <i class="bi bi-check-lg"></i>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- CONTENIDO -->
+
+                    <div class="flex-grow-1">
+
+
+                        <div class="card border-0 bg-light">
+
+
+                            <div class="card-body">
+
+
+                                <div class="d-flex justify-content-between">
+
+
+                                    <h5 class="fw-bold mb-2">
+
+                                        {{ paso.titulo }}
+
+                                    </h5>
+
+
+                                    <span class="badge bg-success">
+
+                                        {{ paso.estado }}
+
+                                    </span>
+
+
+                                </div>
+
+
+                                <p class="text-muted mb-0">
+
+                                    {{ paso.descripcion }}
+
+                                </p>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+    <!-- ================================================= -->
+    <!-- BOTÓN -->
+    <!-- ================================================= -->
+
+    <div class="text-end">
+
+        <a
+            href="{{ url_for('analysis.vista_analisis') }}"
+            class="btn btn-primary"
+        >
+
+            <i class="bi bi-arrow-left"></i>
+
+            Nuevo análisis
+
+        </a>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

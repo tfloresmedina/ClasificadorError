@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1 class="section-title">
+
+                <i class="bi bi-journal-text"></i>
+
+                Evaluaciones Matemáticas
+
+            </h1>
+
+            <p class="section-subtitle">
+
+                Gestión de evaluaciones académicas y análisis matemático.
+
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('evaluacion.crear_evaluacion') }}"
+            class="btn btn-primary"
+        >
+
+            <i class="bi bi-plus-circle"></i>
+
+            Nueva evaluación
+
+        </a>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- TABLA -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+
+            <table class="table table-hover align-middle">
+
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Título</th>
+
+                        <th>Descripción</th>
+
+                        <th>Sección</th>
+
+                        <th>Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for evaluacion in evaluaciones %}
+
+                    <tr>
+
+                        <td>
+
+                            {{ evaluacion.id }}
+
+                        </td>
+
+                        <td>
+
+                            <span class="fw-bold">
+
+                                {{ evaluacion.titulo }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            {{ evaluacion.descripcion }}
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge bg-primary">
+
+                                {{ evaluacion.seccion.nombre }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{{ url_for('evaluacion.detalle_evaluacion', id=evaluacion.id) }}"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+
+                                <i class="bi bi-eye"></i>
+
+                                Ver
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

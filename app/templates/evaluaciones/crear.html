@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-4">
+
+        <h1 class="section-title">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Crear Evaluación
+
+        </h1>
+
+        <p class="section-subtitle">
+
+            Registro de evaluaciones matemáticas académicas.
+
+        </p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- FORMULARIO -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-body p-4">
+
+
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+
+                <!-- TÍTULO -->
+
+                <div class="mb-4">
+
+                    <label class="form-label fw-bold">
+
+                        Título de la evaluación
+
+                    </label>
+
+                    <input
+                        type="text"
+                        name="titulo"
+                        class="form-control"
+                        placeholder="Ejemplo: Evaluación Unidad 1"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- DESCRIPCIÓN -->
+
+                <div class="mb-4">
+
+                    <label class="form-label fw-bold">
+
+                        Descripción
+
+                    </label>
+
+                    <textarea
+                        name="descripcion"
+                        class="form-control"
+                        rows="4"
+                        placeholder="Descripción de la evaluación matemática"
+                    ></textarea>
+
+                </div>
+
+                <!-- UNIDAD -->
+
+<div class="mb-4">
+
+    <label class="form-label fw-bold">
+
+        Unidad académica
+
+    </label>
+
+    <input
+        type="number"
+        name="unidad"
+        class="form-control"
+        min="1"
+        required
+    >
+
+</div>
+
+
+<!-- FECHA -->
+
+<div class="mb-4">
+
+    <label class="form-label fw-bold">
+
+        Fecha evaluación
+
+    </label>
+
+    <input
+        type="date"
+        name="fecha_evaluacion"
+        class="form-control"
+        required
+    >
+
+</div>
+
+
+<!-- GRADO -->
+
+<div class="mb-4">
+
+    <label class="form-label fw-bold">
+
+        Grado académico
+
+    </label>
+
+    <select
+        name="grado_id"
+        class="form-select"
+        required
+    >
+
+        <option value="1">
+
+            Primer grado
+
+        </option>
+
+    </select>
+
+</div>
+
+                <!-- SECCIÓN -->
+
+                <div class="mb-4">
+
+                    <label class="form-label fw-bold">
+
+                        Sección académica
+
+                    </label>
+
+                    <select
+                        name="seccion_id"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+
+                            Seleccione una sección
+
+                        </option>
+
+                        {% for seccion in secciones %}
+
+                        <option value="{{ seccion.id }}">
+
+                            {{ seccion.nombre }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+<!-- ================================================= -->
+<!-- RESOLUCIÓN MODELO -->
+<!-- ================================================= -->
+
+<div class="card border-0 bg-light mb-4">
+
+    <div class="card-body">
+
+
+        <h5 class="fw-bold mb-3">
+
+            <i class="bi bi-journal-check"></i>
+
+            Resolución modelo (Opcional)
+
+        </h5>
+
+
+       <div class="alert alert-info">
+
+    <strong>
+        ¿Para qué sirve la resolución modelo?
+    </strong>
+
+    <br><br>
+
+    Puede registrar una resolución correctamente desarrollada
+    como referencia para el análisis de los exámenes de los estudiantes.
+
+    <br><br>
+
+    Si registra una resolución modelo, el sistema comparará
+    los procedimientos realizados por los estudiantes con esta referencia
+    para generar observaciones más precisas.
+
+    <br><br>
+
+    Si no registra una resolución modelo, el sistema realizará
+    el análisis automáticamente identificando respuestas correctas,
+    errores de procedimiento y recomendaciones de mejora.
+
+</div>
+
+
+        <!-- RESPUESTA MODELO -->
+
+        <div class="mb-4">
+
+            <label class="form-label fw-bold">
+
+                Procedimiento o respuesta modelo
+
+            </label>
+
+            <textarea
+                name="respuesta_modelo"
+                class="form-control"
+                rows="4"
+                placeholder="Ejemplo: 2x + 5 = 9 → x = 2"
+            ></textarea>
+
+        </div>
+
+
+        <!-- IMAGEN MODELO -->
+
+        <div class="mb-3">
+
+            <label class="form-label fw-bold">
+
+                Imagen de resolución modelo
+
+            </label>
+
+            <input
+                type="file"
+                name="imagen_modelo"
+                class="form-control"
+                accept="image/*"
+                multiple
+            >
+
+        </div>
+
+
+    </div>
+
+</div>
+                <!-- BOTONES -->
+
+                <div class="d-flex gap-2">
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="bi bi-save"></i>
+
+                        Guardar evaluación
+
+                    </button>
+
+
+                    <a
+                        href="{{ url_for('evaluacion.listar_evaluaciones') }}"
+                        class="btn btn-secondary"
+                    >
+
+                        Cancelar
+
+                    </a>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,432 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-5">
+
+
+        <h1 class="section-title">
+
+            <i class="bi bi-mortarboard"></i>
+
+            Dashboard Docente
+
+        </h1>
+
+
+        <p class="section-subtitle">
+
+            Panel institucional para monitorear
+            el rendimiento académico detectado
+            por el sistema inteligente TAMARA.
+
+        </p>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- KPIs -->
+    <!-- ================================================= -->
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- TOTAL -->
+
+        <div class="col-md-3">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body text-center">
+
+
+                    <i
+                        class="bi bi-journal-check"
+                        style="
+                            font-size: 3rem;
+                            color: #2563eb;
+                        "
+                    ></i>
+
+
+                    <h5 class="fw-bold mt-3">
+
+                        Total Análisis
+
+                    </h5>
+
+
+                    <h2 class="fw-bold">
+
+                        {{ metricas.total_analisis }}
+
+                    </h2>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- CORRECTOS -->
+
+        <div class="col-md-3">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body text-center">
+
+
+                    <i
+                        class="bi bi-check-circle"
+                        style="
+                            font-size: 3rem;
+                            color: #16a34a;
+                        "
+                    ></i>
+
+
+                    <h5 class="fw-bold mt-3">
+
+                        Correctos
+
+                    </h5>
+
+
+                    <h2 class="fw-bold">
+
+                        {{ metricas.correctos }}
+
+                    </h2>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- RIESGO -->
+
+        <div class="col-md-3">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body text-center">
+
+
+                    <i
+                        class="bi bi-exclamation-triangle"
+                        style="
+                            font-size: 3rem;
+                            color: #dc2626;
+                        "
+                    ></i>
+
+
+                    <h5 class="fw-bold mt-3">
+
+                        Riesgo Alto
+
+                    </h5>
+
+
+                    <h2 class="fw-bold">
+
+                        {{ metricas.riesgo_alto }}
+
+                    </h2>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- OCR -->
+
+        <div class="col-md-3">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body text-center">
+
+
+                    <i
+                        class="bi bi-cpu"
+                        style="
+                            font-size: 3rem;
+                            color: #9333ea;
+                        "
+                    ></i>
+
+
+                    <h5 class="fw-bold mt-3">
+
+                        Precisión OCR
+
+                    </h5>
+
+
+                    <h2 class="fw-bold">
+
+                        {{ metricas.promedio_ocr }}%
+
+                    </h2>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- GRÁFICOS -->
+    <!-- ================================================= -->
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- ÉXITO -->
+
+        <div class="col-md-6">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body">
+
+
+                    <h4 class="fw-bold mb-4">
+
+                        <i class="bi bi-pie-chart"></i>
+
+                        Rendimiento Académico
+
+                    </h4>
+
+
+                    <p class="text-muted">
+
+                        Distribución del desempeño
+                        académico detectado por el
+                        sistema inteligente.
+
+                    </p>
+
+
+                    <canvas id="graficoDocente"></canvas>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- INTERPRETACIÓN -->
+
+        <div class="col-md-6">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body">
+
+
+                    <h4 class="fw-bold mb-4">
+
+                        <i class="bi bi-lightbulb"></i>
+
+                        Interpretación Pedagógica
+
+                    </h4>
+
+
+                    {% if metricas.riesgo_alto > 5 %}
+
+                        <div class="alert alert-danger">
+
+
+                            Se detecta una cantidad
+                            significativa de estudiantes
+                            con riesgo académico alto.
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="alert alert-success">
+
+
+                            El rendimiento académico
+                            general se mantiene estable.
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <ul class="list-group list-group-flush">
+
+
+                        <li class="list-group-item">
+
+                            <strong>
+
+                                Porcentaje éxito:
+
+                            </strong>
+
+                            {{ metricas.porcentaje_exito }}%
+
+                        </li>
+
+
+                        <li class="list-group-item">
+
+                            <strong>
+
+                                Análisis incorrectos:
+
+                            </strong>
+
+                            {{ metricas.incorrectos }}
+
+                        </li>
+
+
+                        <li class="list-group-item">
+
+                            <strong>
+
+                                Precisión OCR promedio:
+
+                            </strong>
+
+                            {{ metricas.promedio_ocr }}%
+
+                        </li>
+
+
+                    </ul>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- CHART -->
+<!-- ===================================================== -->
+
+<script>
+
+
+    const ctxDocente = document.getElementById(
+        'graficoDocente'
+    );
+
+
+    new Chart(
+
+        ctxDocente,
+
+        {
+
+            type: 'doughnut',
+
+            data: {
+
+                labels: [
+
+                    'Correctos',
+
+                    'Incorrectos'
+                ],
+
+                datasets: [
+
+                    {
+
+                        data: [
+
+                            {{ metricas.correctos }},
+
+                            {{ metricas.incorrectos }}
+                        ],
+
+                        borderWidth: 1
+                    }
+                ]
+            },
+
+            options: {
+
+                responsive: true,
+
+                plugins: {
+
+                    legend: {
+
+                        position: 'bottom'
+                    }
+                }
+            }
+        }
+    );
+
+</script>
+
+{% endblock %}

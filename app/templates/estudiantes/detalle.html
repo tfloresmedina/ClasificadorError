@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card shadow-sm border-0">
+
+    <div class="card-body p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+
+                <h2 class="page-title">
+
+                    Información del Estudiante
+
+                </h2>
+
+                <p class="text-muted">
+
+                    Detalle académico institucional.
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <a href="{{ url_for('estudiantes.editar', id=estudiante.id) }}"
+                   class="btn btn-warning">
+
+                    Editar
+
+                </a>
+
+                <a href="{{ url_for('estudiantes.listar') }}"
+                   class="btn btn-secondary">
+
+                    Volver
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <table class="table">
+
+                    <tr>
+
+                        <th width="35%">
+                            Código
+                        </th>
+
+                        <td>
+                            {{ estudiante.codigo }}
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>
+                            Nombres
+                        </th>
+
+                        <td>
+                            {{ estudiante.nombres }}
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>
+                            Apellidos
+                        </th>
+
+                        <td>
+                            {{ estudiante.apellidos }}
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>
+                            Fecha Nacimiento
+                        </th>
+
+                        <td>
+                            {{ estudiante.fecha_nacimiento }}
+                        </td>
+
+                    </tr>
+
+                </table>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <table class="table">
+
+                    <tr>
+
+                        <th width="35%">
+                            Grado
+                        </th>
+
+                        <td>
+                            {{ estudiante.grado.nombre }}
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>
+                            Sección
+                        </th>
+
+                        <td>
+                            {{ estudiante.seccion.nombre }}
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <td>
+
+                            {% if estudiante.estado %}
+
+                                <span class="badge bg-success">
+
+                                    Activo
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+
+                                    Inactivo
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>
+                            Fecha Registro
+                        </th>
+
+                        <td>
+                            {{ estudiante.fecha_registro }}
+                        </td>
+
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

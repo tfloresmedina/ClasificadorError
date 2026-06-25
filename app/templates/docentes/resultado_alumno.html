@@ -1,0 +1,616 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-5">
+
+
+        <h1 class="section-title">
+
+            <i class="bi bi-bar-chart-fill"></i>
+
+            Resultado del Análisis
+
+        </h1>
+
+
+        <p class="section-subtitle">
+
+            Visualización inteligente del
+            procesamiento algebraico y
+            pedagógico del estudiante.
+
+        </p>
+
+
+    </div>
+
+
+    {% if resultado %}
+
+
+    <!-- ================================================= -->
+    <!-- ESTUDIANTE -->
+    <!-- ================================================= -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+
+        <div class="card-body p-4">
+
+
+            <h3 class="fw-bold">
+
+                {{ estudiante.nombres }}
+
+            </h3>
+
+
+            <p class="text-muted mb-0">
+
+                Código:
+                {{ estudiante.codigo }}
+
+            </p>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- MÉTRICAS -->
+    <!-- ================================================= -->
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- RIESGO -->
+
+        <div class="col-md-4">
+
+
+            <div class="card border-0 shadow-sm">
+
+
+                <div class="card-body text-center p-4">
+
+
+                    <h5 class="text-muted">
+
+                        Riesgo
+
+                    </h5>
+
+
+                    <h3 class="fw-bold text-danger">
+
+                        {{<span class="badge bg-danger fs-6">
+
+    {{ resultado.riesgo }}
+
+</span> }}
+
+                    </h3>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- TENDENCIA -->
+
+        <div class="col-md-4">
+
+
+            <div class="card border-0 shadow-sm">
+
+
+                <div class="card-body text-center p-4">
+
+
+                    <h5 class="text-muted">
+
+                        Tendencia
+
+                    </h5>
+
+
+                    <h3 class="fw-bold text-primary">
+
+                        <span class="badge bg-primary fs-6">
+
+    {{ resultado.tendencia }}
+
+</span>
+
+                    </h3>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- PERFIL -->
+
+        <div class="col-md-4">
+
+
+            <div class="card border-0 shadow-sm">
+
+
+                <div class="card-body text-center p-4">
+
+
+                    <h5 class="text-muted">
+
+                        Perfil Matemático
+
+                    </h5>
+
+
+                    <h6 class="fw-bold">
+
+                        <span class="badge bg-dark fs-6">
+
+    {{ resultado.perfil_matematico }}
+
+</span>
+
+                    </h6>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- RESPUESTAS -->
+    <!-- ================================================= -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+
+        <div class="card-body p-4">
+
+
+            <h4 class="fw-bold mb-4">
+
+                Procesamiento Algebraico
+
+            </h4>
+
+
+            <!-- OCR -->
+
+            <div class="mb-4">
+
+
+                <small class="text-muted">
+
+                    OCR detectado
+
+                </small>
+
+
+                <div class="fw-semibold">
+
+
+                    {{ resultado.respuesta_original }}
+
+                </div>
+
+
+            </div>
+
+
+            <!-- NORMALIZADO -->
+
+            <div class="mb-4">
+
+
+                <small class="text-muted">
+
+                    Expresión normalizada
+
+                </small>
+
+
+                <div class="fw-semibold text-primary">
+
+
+                    {{ resultado.respuesta_normalizada }}
+
+                </div>
+
+
+            </div>
+
+
+            <!-- RESULTADO -->
+
+            <div>
+
+
+                <small class="text-muted">
+
+                    Resultado IA
+
+                </small>
+
+
+                <div class="fw-bold text-success">
+
+
+                    {{ resultado.resultado_general }}
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+<!-- ================================================= -->
+<!-- ANÁLISIS ESTRUCTURAL -->
+<!-- ================================================= -->
+
+<div class="card border-0 shadow-sm mb-4">
+
+
+    <div class="card-body p-4">
+
+
+        <h4 class="fw-bold mb-4">
+
+            Análisis Estructural Matemático
+
+        </h4>
+
+
+        <div class="row g-4">
+
+
+            <!-- TIPO EJERCICIO -->
+
+            <div class="col-md-3">
+
+
+                <div class="border rounded p-3 h-100">
+
+
+                    <small class="text-muted">
+
+                        Tipo de ejercicio
+
+                    </small>
+
+
+                    <div class="fw-bold text-primary mt-2">
+
+
+                        {{ resultado.tipo_ejercicio }}
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- DIFICULTAD -->
+
+            <div class="col-md-3">
+
+
+                <div class="border rounded p-3 h-100">
+
+
+                    <small class="text-muted">
+
+                        Dificultad estimada
+
+                    </small>
+
+
+                    <div class="fw-bold text-warning mt-2">
+
+
+                        {{ resultado.dificultad }}
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- PASOS -->
+
+            <div class="col-md-3">
+
+
+                <div class="border rounded p-3 h-100">
+
+
+                    <small class="text-muted">
+
+                        Pasos estimados
+
+                    </small>
+
+
+                    <div class="fw-bold text-success mt-2">
+
+
+                        {{ resultado.pasos_estimados }}
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- VALIDACIÓN -->
+
+            <div class="col-md-3">
+
+
+                <div class="border rounded p-3 h-100">
+
+
+                    <small class="text-muted">
+
+                        Validación algebraica
+
+                    </small>
+
+
+                    <div class="fw-bold text-danger mt-2">
+
+
+                        {% if resultado.correcto %}
+
+                            Equivalencia correcta
+
+                        {% else %}
+
+                            Inconsistencia detectada
+
+                        {% endif %}
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+<!-- ================================================= -->
+<!-- ANÁLISIS PEDAGÓGICO -->
+<!-- ================================================= -->
+
+<div class="card border-0 shadow-sm mb-4">
+
+
+    <div class="card-body p-4">
+
+
+        <h4 class="fw-bold mb-4">
+
+            Análisis Pedagógico
+
+        </h4>
+
+
+        <div class="row g-4">
+
+
+            <!-- COMPETENCIA -->
+
+            <div class="col-md-4">
+
+
+                <div class="border rounded p-3 h-100">
+
+
+                    <small class="text-muted">
+
+                        Competencia
+
+                    </small>
+
+
+                    <div class="fw-bold text-primary mt-2">
+
+
+                        <span class="badge bg-info text-dark">
+
+    {{ resultado.competencia }}
+
+</span>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- POLYA -->
+
+            <div class="col-md-4">
+
+
+                <div class="border rounded p-3 h-100">
+
+
+                    <small class="text-muted">
+
+                        Proceso matemático afectado - Referencia polya
+
+                    </small>
+
+
+                    <div class="fw-bold text-success mt-2">
+
+
+                        {% if resultado.fase_polya %}
+
+                            {{ resultado.fase_polya }}
+
+                        {% else %}
+
+                            Proceso validado correctamente
+
+                        {% endif %}
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- SEVERIDAD -->
+
+            <div class="col-md-4">
+
+
+                <div class="border rounded p-3 h-100">
+
+
+                    <small class="text-muted">
+
+                        Severidad
+
+                    </small>
+
+
+                    <div class="fw-bold text-danger mt-2">
+
+
+                        <span class="badge bg-warning text-dark fs-6">
+
+    {{ resultado.severidad }}
+
+</span>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+    <!-- ================================================= -->
+    <!-- RECOMENDACIONES -->
+    <!-- ================================================= -->
+
+    <div class="card border-0 shadow-sm">
+
+
+        <div class="card-body p-4">
+
+
+            <h4 class="fw-bold mb-4">
+
+                Recomendaciones Pedagógicas
+
+            </h4>
+
+
+            <div class="alert alert-info border-0">
+
+
+                {{ resultado.recomendaciones }}
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    {% else %}
+
+
+    <div class="alert alert-warning">
+
+
+        No existen resultados de análisis
+        registrados para este estudiante.
+
+    </div>
+
+
+    {% endif %}
+
+
+</div>
+
+{% endblock %}

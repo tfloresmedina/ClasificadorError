@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-5">
+
+
+        <h1 class="section-title">
+
+            <i class="bi bi-diagram-3"></i>
+
+            Mis Secciones
+
+        </h1>
+
+
+        <p class="section-subtitle">
+
+            Gestión académica inteligente
+            de aulas asignadas al docente.
+
+        </p>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- SECCIONES -->
+    <!-- ================================================= -->
+
+    <div class="row g-4">
+
+
+        {% for seccion in secciones %}
+
+
+        <div class="col-md-6 col-xl-4">
+
+
+            <div class="card border-0 shadow-sm h-100">
+
+
+                <div class="card-body p-4">
+
+
+                    <!-- ================================= -->
+                    <!-- HEADER -->
+                    <!-- ================================= -->
+
+                    <div class="d-flex justify-content-between">
+
+
+                        <div>
+
+
+                            <h3 class="fw-bold">
+
+                                Sección {{ seccion.nombre }}
+
+                            </h3>
+
+
+                            <p class="text-muted mb-0">
+
+                                Aula académica asignada
+
+                            </p>
+
+
+                        </div>
+
+
+                        <div>
+
+
+                            <span class="badge bg-primary">
+
+                                {{ seccion.estudiantes|length }}
+                                alumnos
+
+                            </span>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- ================================= -->
+                    <!-- INFO -->
+                    <!-- ================================= -->
+
+                    <div class="mt-4">
+
+
+                        <div class="mb-3">
+
+
+                            <i class="bi bi-people"></i>
+
+                            Gestión de estudiantes
+
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+
+                            <i class="bi bi-file-earmark-text"></i>
+
+                            Evaluaciones matemáticas
+
+
+                        </div>
+
+
+                        <div>
+
+
+                            <i class="bi bi-cpu"></i>
+
+                            Procesamiento IA automático
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- ================================= -->
+                    <!-- BTN -->
+                    <!-- ================================= -->
+
+                    <div class="mt-4">
+
+
+                        <a
+                            href="{{ url_for(
+                            'docente.detalle_seccion',
+                            seccion_id=seccion.id
+                                ) }}"
+                            class="btn btn-primary w-100"
+                        >
+
+                            <i class="bi bi-arrow-right-circle"></i>
+
+                            Ingresar a Sección
+
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}

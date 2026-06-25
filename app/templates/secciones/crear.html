@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-4">
+
+        <h1 class="section-title">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Crear Sección
+
+        </h1>
+
+        <p class="section-subtitle">
+
+            Registro de nuevas secciones académicas.
+
+        </p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- FORMULARIO -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-body p-4">
+
+
+            <form method="POST">
+
+
+                <!-- NOMBRE -->
+
+                <div class="mb-4">
+
+                    <label class="form-label fw-bold">
+
+                        Nombre de la sección
+
+                    </label>
+
+                    <input
+                        type="text"
+                        name="nombre"
+                        class="form-control"
+                        placeholder="Ejemplo: A"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- BOTONES -->
+
+                <div class="d-flex gap-2">
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="bi bi-save"></i>
+
+                        Guardar sección
+
+                    </button>
+
+
+                    <a
+                        href="{{ url_for('seccion.listar_secciones') }}"
+                        class="btn btn-secondary"
+                    >
+
+                        Cancelar
+
+                    </a>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

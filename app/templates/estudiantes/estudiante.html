@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-5">
+
+
+        <h1 class="section-title">
+
+            <i class="bi bi-person-workspace"></i>
+
+            Dashboard Estudiante
+
+        </h1>
+
+
+        <p class="section-subtitle">
+
+            Panel académico personalizado
+            generado automáticamente por
+            el sistema inteligente TAMARA.
+
+        </p>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- KPIs -->
+    <!-- ================================================= -->
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- TOTAL -->
+
+        <div class="col-md-4">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body text-center">
+
+
+                    <i
+                        class="bi bi-journal-text"
+                        style="
+                            font-size: 3rem;
+                            color: #2563eb;
+                        "
+                    ></i>
+
+
+                    <h5 class="fw-bold mt-3">
+
+                        Total Analizados
+
+                    </h5>
+
+
+                    <h2 class="fw-bold">
+
+                        {{ metricas.total }}
+
+                    </h2>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- CORRECTOS -->
+
+        <div class="col-md-4">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body text-center">
+
+
+                    <i
+                        class="bi bi-check-circle"
+                        style="
+                            font-size: 3rem;
+                            color: #16a34a;
+                        "
+                    ></i>
+
+
+                    <h5 class="fw-bold mt-3">
+
+                        Correctos
+
+                    </h5>
+
+
+                    <h2 class="fw-bold">
+
+                        {{ metricas.correctos }}
+
+                    </h2>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- PORCENTAJE -->
+
+        <div class="col-md-4">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body text-center">
+
+
+                    <i
+                        class="bi bi-graph-up"
+                        style="
+                            font-size: 3rem;
+                            color: #9333ea;
+                        "
+                    ></i>
+
+
+                    <h5 class="fw-bold mt-3">
+
+                        Rendimiento
+
+                    </h5>
+
+
+                    <h2 class="fw-bold">
+
+                        {{ metricas.porcentaje }}%
+
+                    </h2>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- MENSAJE -->
+    <!-- ================================================= -->
+
+    <div class="card border-0 shadow-sm">
+
+
+        <div class="card-body p-5">
+
+
+            <h3 class="fw-bold mb-4">
+
+                <i class="bi bi-lightbulb"></i>
+
+                Interpretación Académica
+
+            </h3>
+
+
+            {% if metricas.porcentaje >= 80 %}
+
+                <div class="alert alert-success">
+
+
+                    Excelente desempeño matemático.
+                    Continúe reforzando habilidades
+                    algebraicas avanzadas.
+
+                </div>
+
+            {% elif metricas.porcentaje >= 60 %}
+
+                <div class="alert alert-warning">
+
+
+                    El desempeño es moderado.
+                    Se recomienda reforzar algunos
+                    procedimientos matemáticos.
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-danger">
+
+
+                    Se recomienda reforzamiento
+                    académico personalizado para
+                    mejorar el aprendizaje.
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}

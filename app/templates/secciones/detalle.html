@@ -1,0 +1,293 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-5">
+
+        <h1 class="section-title">
+
+            <i class="bi bi-diagram-3"></i>
+
+            Sección {{ seccion.nombre }}
+
+        </h1>
+
+        <p class="section-subtitle">
+
+            Gestión académica de estudiantes y evaluaciones.
+
+        </p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- KPIs -->
+    <!-- ================================================= -->
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- ESTUDIANTES -->
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <i
+                        class="bi bi-people"
+                        style="
+                            font-size: 3rem;
+                            color: #2563eb;
+                        "
+                    ></i>
+
+                    <h5 class="fw-bold mt-3">
+
+                        Estudiantes
+
+                    </h5>
+
+                    <h2 class="fw-bold">
+
+                        {{ seccion.estudiantes|length }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EVALUACIONES -->
+
+        <div class="col-md-6">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <i
+                        class="bi bi-journal-text"
+                        style="
+                            font-size: 3rem;
+                            color: #16a34a;
+                        "
+                    ></i>
+
+                    <h5 class="fw-bold mt-3">
+
+                        Evaluaciones
+
+                    </h5>
+
+                    <h2 class="fw-bold">
+
+                        {{ seccion.evaluaciones|length }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ESTUDIANTES -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm mb-5">
+
+        <div class="card-body">
+
+
+            <div class="d-flex justify-content-between mb-4">
+
+                <h4 class="fw-bold">
+
+                    <i class="bi bi-people"></i>
+
+                    Lista de estudiantes
+
+                </h4>
+
+
+                <a
+                    href="{{ url_for('estudiantes.crear') }}"
+                    class="btn btn-primary"
+                >
+
+                    <i class="bi bi-plus-circle"></i>
+
+                    Nuevo estudiante
+
+                </a>
+
+            </div>
+
+
+            <table class="table table-hover align-middle">
+
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>Código</th>
+
+                        <th>Nombres</th>
+
+                        <th>Apellidos</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for estudiante in seccion.estudiantes %}
+
+                    <tr>
+
+                        <td>
+
+                            {{ estudiante.codigo }}
+
+                        </td>
+
+                        <td>
+
+                            {{ estudiante.nombres }}
+
+                        </td>
+
+                        <td>
+
+                            {{ estudiante.apellidos }}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- EVALUACIONES -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+
+            <div class="d-flex justify-content-between mb-4">
+
+                <h4 class="fw-bold">
+
+                    <i class="bi bi-journal-text"></i>
+
+                    Evaluaciones
+
+                </h4>
+
+
+                <a
+                    href="{{ url_for('evaluacion.crear_evaluacion') }}"
+                    class="btn btn-success"
+                >
+
+                    <i class="bi bi-plus-circle"></i>
+
+                    Nueva evaluación
+
+                </a>
+
+            </div>
+
+
+            <table class="table table-hover align-middle">
+
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Título</th>
+
+                        <th>Fecha</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for evaluacion in seccion.evaluaciones %}
+
+                    <tr>
+
+                        <td>
+
+                            {{ evaluacion.id }}
+
+                        </td>
+
+                        <td>
+
+                            {{ evaluacion.titulo }}
+
+                        </td>
+
+                        <td>
+
+                            {{ evaluacion.fecha }}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

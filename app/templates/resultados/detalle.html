@@ -1,0 +1,413 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-5">
+
+
+        <h1 class="section-title">
+
+            <i class="bi bi-file-earmark-text"></i>
+
+            Detalle del Análisis
+
+        </h1>
+
+
+        <p class="section-subtitle">
+
+            Visualización detallada del resultado
+            matemático procesado por el sistema
+            inteligente TAMARA.
+
+        </p>
+        
+        <div class="mt-4">
+
+
+    <a
+        href="{{ url_for('analysis.generar_pdf', resultado_id=resultado.id) }}"
+        class="btn btn-danger"
+    >
+
+        <i class="bi bi-file-earmark-pdf"></i>
+
+        Descargar Reporte PDF
+
+    </a>
+
+
+</div>
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- RESUMEN -->
+    <!-- ================================================= -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- RESULTADO -->
+
+        <div class="col-md-3">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body text-center">
+
+
+                    <i
+                        class="bi bi-check-circle"
+                        style="
+                            font-size: 3rem;
+                            color:
+                            {% if resultado.es_correcto %}
+                                #16a34a
+                            {% else %}
+                                #dc2626
+                            {% endif %}
+                            ;
+                        "
+                    ></i>
+
+
+                    <h5 class="fw-bold mt-3">
+
+                        Resultado
+
+                    </h5>
+
+
+                    {% if resultado.es_correcto %}
+
+                        <span class="badge bg-success">
+
+                            Correcto
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge bg-danger">
+
+                            Incorrecto
+
+                        </span>
+
+                    {% endif %}
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- CONFIANZA -->
+
+        <div class="col-md-3">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body text-center">
+
+
+                    <i
+                        class="bi bi-bar-chart"
+                        style="
+                            font-size: 3rem;
+                            color: #2563eb;
+                        "
+                    ></i>
+
+
+                    <h5 class="fw-bold mt-3">
+
+                        Confianza OCR
+
+                    </h5>
+
+
+                    <span class="badge bg-primary">
+
+                        {{ resultado.nivel_confianza }}%
+
+                    </span>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- RIESGO -->
+
+        <div class="col-md-3">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body text-center">
+
+
+                    <i
+                        class="bi bi-exclamation-triangle"
+                        style="
+                            font-size: 3rem;
+                            color: #ca8a04;
+                        "
+                    ></i>
+
+
+                    <h5 class="fw-bold mt-3">
+
+                        Riesgo
+
+                    </h5>
+
+
+                    <span class="badge bg-warning text-dark">
+
+                        {{ resultado.riesgo_academico }}
+
+                    </span>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- DIFICULTAD -->
+
+        <div class="col-md-3">
+
+
+            <div class="card border-0 shadow-sm p-4 h-100">
+
+
+                <div class="card-body text-center">
+
+
+                    <i
+                        class="bi bi-cpu"
+                        style="
+                            font-size: 3rem;
+                            color: #9333ea;
+                        "
+                    ></i>
+
+
+                    <h5 class="fw-bold mt-3">
+
+                        Dificultad
+
+                    </h5>
+
+
+                    <span class="badge bg-dark">
+
+                        {{ resultado.dificultad }}
+
+                    </span>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- INFORMACIÓN -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+
+        <div class="card-body">
+
+
+            <h4 class="fw-bold mb-4">
+
+                <i class="bi bi-info-circle"></i>
+
+                Información del Análisis
+
+            </h4>
+
+
+            <div class="row g-4">
+
+
+                <div class="col-md-6">
+
+
+                    <strong>
+
+                        Tipo de Error
+
+                    </strong>
+
+
+                    <p>
+
+                        {{ resultado.tipo_error }}
+
+                    </p>
+
+
+                </div>
+
+
+                <div class="col-md-6">
+
+
+                    <strong>
+
+                        Severidad
+
+                    </strong>
+
+
+                    <p>
+
+                        {{ resultado.severidad_error }}
+
+                    </p>
+
+
+                </div>
+
+
+                <div class="col-md-6">
+
+
+                    <strong>
+
+                        Tema Matemático
+
+                    </strong>
+
+
+                    <p>
+
+                        {{ resultado.tema_matematico }}
+
+                    </p>
+
+
+                </div>
+
+
+                <div class="col-md-6">
+
+
+                    <strong>
+
+                        Tipo de Ejercicio
+
+                    </strong>
+
+
+                    <p>
+
+                        {{ resultado.tipo_ejercicio }}
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- RECOMENDACIÓN -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+
+        <div class="card-body">
+
+
+            <h4 class="fw-bold mb-3">
+
+                <i class="bi bi-lightbulb"></i>
+
+                Recomendación Pedagógica
+
+            </h4>
+
+
+            <div class="alert alert-info mb-0">
+
+
+                {{ resultado.recomendacion }}
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- FECHA -->
+    <!-- ================================================= -->
+
+    <div class="text-end text-muted">
+
+
+        Procesado el:
+
+        {{ resultado.fecha_registro.strftime('%d/%m/%Y %H:%M') }}
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}

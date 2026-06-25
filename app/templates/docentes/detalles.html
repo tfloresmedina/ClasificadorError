@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card shadow-sm border-0">
+
+    <div class="card-body p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+
+                <h2 class="page-title">
+
+                    Información del Docente
+
+                </h2>
+
+                <p class="text-muted">
+
+                    Detalle pedagógico institucional.
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <a href="{{ url_for('docentes.editar', id=docente.id) }}"
+                   class="btn btn-warning">
+
+                    Editar
+
+                </a>
+
+                <a href="{{ url_for('docentes.listar') }}"
+                   class="btn btn-secondary">
+
+                    Volver
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <table class="table">
+
+                    <tr>
+
+                        <th width="35%">
+                            Código
+                        </th>
+
+                        <td>
+                            {{ docente.codigo }}
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>
+                            Nombres
+                        </th>
+
+                        <td>
+                            {{ docente.nombres }}
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>
+                            Apellidos
+                        </th>
+
+                        <td>
+                            {{ docente.apellidos }}
+                        </td>
+
+                    </tr>
+
+                </table>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <table class="table">
+
+                    <tr>
+
+                        <th width="35%">
+                            Especialidad
+                        </th>
+
+                        <td>
+                            {{ docente.especialidad }}
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <td>
+
+                            {% if docente.estado %}
+
+                                <span class="badge bg-success">
+
+                                    Activo
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+
+                                    Inactivo
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>
+                            Fecha Registro
+                        </th>
+
+                        <td>
+                            {{ docente.fecha_registro }}
+                        </td>
+
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

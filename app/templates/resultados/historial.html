@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-5">
+
+
+        <h1 class="section-title">
+
+            <i class="bi bi-clock-history"></i>
+
+            Historial Académico
+
+        </h1>
+
+
+        <p class="section-subtitle">
+
+            Registro histórico de análisis matemáticos,
+            resultados pedagógicos y métricas detectadas
+            por el sistema inteligente.
+
+        </p>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- TABLA -->
+    <!-- ================================================= -->
+
+    <div class="card p-4">
+
+
+        <div class="card-body">
+
+
+            {% if historial %}
+
+
+                <div class="table-responsive">
+
+
+                    <table
+                        class="table table-hover align-middle"
+                    >
+
+
+                        <thead class="table-light">
+
+
+                            <tr>
+
+                                <th>
+
+                                    ID
+
+                                </th>
+
+                                <th>
+
+                                    Resultado
+
+                                </th>
+
+                                <th>
+
+                                    Error
+
+                                </th>
+
+                                <th>
+
+                                    Dificultad
+
+                                </th>
+
+                                <th>
+
+                                    Riesgo
+
+                                </th>
+
+                                <th>
+
+                                    Confianza OCR
+
+                                </th>
+
+                                <th>
+
+                                    Fecha
+
+                                </th>
+
+                            </tr>
+                            <th>
+
+                                    Acción
+
+                            </th>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                            {% for item in historial %}
+
+
+                                <tr>
+
+
+                                    <!-- ID -->
+
+                                    <td>
+
+                                        #{{ item.id }}
+
+                                    </td>
+
+
+                                    <!-- RESULTADO -->
+
+                                    <td>
+
+                                        {% if item.es_correcto %}
+
+                                            <span class="badge bg-success">
+
+                                                Correcto
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-danger">
+
+                                                Incorrecto
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- ERROR -->
+
+                                    <td>
+
+                                        {{ item.tipo_error or 'Sin error' }}
+
+                                    </td>
+
+
+                                    <!-- DIFICULTAD -->
+
+                                    <td>
+
+                                        {% if item.dificultad == 'alta' %}
+
+                                            <span class="badge bg-danger">
+
+                                                Alta
+
+                                            </span>
+
+                                        {% elif item.dificultad == 'media' %}
+
+                                            <span class="badge bg-warning text-dark">
+
+                                                Media
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-success">
+
+                                                Baja
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- RIESGO -->
+
+                                    <td>
+
+                                        {% if item.riesgo_academico == 'alto' %}
+
+                                            <span class="badge bg-danger">
+
+                                                Alto
+
+                                            </span>
+
+                                        {% elif item.riesgo_academico == 'medio' %}
+
+                                            <span class="badge bg-warning text-dark">
+
+                                                Medio
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-success">
+
+                                                Bajo
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- OCR -->
+
+                                    <td>
+
+                                        {{ item.nivel_confianza }}%
+
+                                    </td>
+
+
+                                    <!-- FECHA -->
+
+                                    <td>
+
+                                        {{ item.fecha_registro.strftime('%d/%m/%Y') }}
+
+                                    </td>
+
+                                    <!-- ACCIÓN -->
+
+                            <td>
+
+                                <a
+                                    href="{{ url_for('analysis.detalle_resultado', resultado_id=item.id) }}"
+                                    class="btn btn-sm btn-primary"
+                                >
+
+                                    <i class="bi bi-eye"></i>
+
+                                    Ver detalle
+
+                                </a>
+
+                            </td>
+                                </tr>
+
+
+                            {% endfor %}
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            {% else %}
+
+
+                <div class="alert alert-info mb-0">
+
+
+                    No existen registros históricos
+                    disponibles actualmente.
+
+                </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}

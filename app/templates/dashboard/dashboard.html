@@ -1,0 +1,1440 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ================================================= -->
+<!-- HEADER -->
+<!-- ================================================= -->
+
+<div class="mb-4">
+
+    <h2 class="fw-bold">
+
+        Dashboard Inteligente
+
+    </h2>
+
+    <p class="text-muted mb-0">
+
+        Monitoreo académico, análisis matemático
+        y seguimiento inteligente de evaluaciones.
+
+    </p>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- KPIs -->
+<!-- ================================================= -->
+
+<div class="row g-4 mb-4">
+
+
+    <!-- EXÁMENES -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card h-100">
+
+            <div class="card-body">
+
+
+                <div
+                    class="
+                        d-flex
+                        justify-content-between
+                        align-items-center
+                    "
+                >
+
+                    <div>
+
+                        <small class="text-muted">
+
+                            Exámenes analizados
+
+                        </small>
+
+                        <h2 class="fw-bold mb-0">
+
+                            {{ metricas.total_analisis or 0 }}
+
+                        </h2>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            rounded-circle
+                            p-3
+                            bg-primary
+                            text-white
+                        "
+                    >
+
+                        <i class="bi bi-file-earmark-check"></i>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    
+    <!-- ERRORES -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card h-100">
+
+            <div class="card-body">
+
+
+                <div
+                    class="
+                        d-flex
+                        justify-content-between
+                        align-items-center
+                    "
+                >
+
+                    <div>
+
+                        <small class="text-muted">
+
+                            Errores detectados
+
+                        </small>
+
+                        <h2 class="fw-bold mb-0">
+
+                            {{ metricas.total_errores or 0 }}
+
+                        </h2>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            rounded-circle
+                            p-3
+                            bg-danger
+                            text-white
+                        "
+                    >
+
+                        <i class="bi bi-exclamation-triangle"></i>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ESTUDIANTES -->
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="card h-100">
+
+            <div class="card-body">
+
+
+                <div
+                    class="
+                        d-flex
+                        justify-content-between
+                        align-items-center
+                    "
+                >
+
+                    <div>
+
+                        <small class="text-muted">
+
+                            Estudiantes evaluados
+
+                        </small>
+
+                        <h2 class="fw-bold mb-0">
+
+                            {{ metricas.total_estudiantes or 0 }}
+
+                        </h2>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            rounded-circle
+                            p-3
+                            bg-warning
+                            text-white
+                        "
+                    >
+
+                        <i class="bi bi-people"></i>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+<div class="container-fluid">
+
+
+    <!-- ================================================= -->
+    <!-- HERO -->
+    <!-- ================================================= -->
+
+    <div class="card p-5 mb-5">
+
+
+        <div class="row align-items-center">
+
+
+            <div class="col-md-8">
+
+
+                <h1
+                    class="fw-bold mb-3"
+                    style="
+                        font-size: 2.5rem;
+                        color: #0f172a;
+                    "
+                >
+
+                  Sistema Web para el Análisis
+                    y Validación de Procedimientos
+                    Matemáticos
+
+                </h1>
+
+
+                <p
+                    class="text-muted"
+                    style="
+                        font-size: 1.1rem;
+                    "
+                >
+
+                    Plataforma educativa basada en OCR,
+                    AST, SymPy y análisis pedagógico
+                    para apoyar el proceso de enseñanza
+                    y aprendizaje en matemática.
+
+                </p>
+
+
+                <div class="mt-4">
+
+
+                    <a
+                        href="/resultados/analizar"
+                        class="btn btn-primary btn-lg"
+                    >
+
+                        <i class="bi bi-play-circle"></i>
+
+                        Iniciar análisis
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+            <div class="col-md-4 text-center">
+
+
+                <i
+                    class="bi bi-cpu"
+                    style="
+                        font-size: 10rem;
+                        color: #2563eb;
+                    "
+                ></i>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- KPIs -->
+    <!-- ================================================= -->
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- KPI -->
+
+        <div class="col-md-3">
+
+
+            <div class="card p-4 h-100">
+
+
+                <div class="card-body">
+
+
+                    <div class="d-flex justify-content-between">
+
+
+                        <div>
+
+
+                            <h6 class="text-muted">
+
+                                Análisis ejecutados
+
+                            </h6>
+
+
+                            <h2 class="fw-bold">
+
+                                {{ metricas.total_analisis }}
+
+                            </h2>
+
+
+                        </div>
+
+
+                        <div>
+
+                            <i
+                                class="bi bi-bar-chart"
+                                style="
+                                    font-size: 2rem;
+                                    color: #2563eb;
+                                "
+                            ></i>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+
+    <div class="col-lg-5">
+
+    <div class="card h-100">
+
+        <div class="card-body">
+
+            <h4 class="fw-bold mb-4">
+
+                Aporte Pedagógico del Sistema
+
+            </h4>
+
+            <div class="mb-4">
+
+                <div class="d-flex align-items-start gap-3">
+
+                    <i class="bi bi-search fs-3 text-primary"></i>
+
+                    <div>
+
+                        <strong>
+
+                            Identificación de errores
+
+                        </strong>
+
+                        <div class="text-muted small">
+
+                            Detecta errores algebraicos
+                            durante la resolución de ejercicios.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="mb-4">
+
+                <div class="d-flex align-items-start gap-3">
+
+                    <i class="bi bi-diagram-3 fs-3 text-success"></i>
+
+                    <div>
+
+                        <strong>
+
+                            Validación matemática
+
+                        </strong>
+
+                        <div class="text-muted small">
+
+                            Verifica equivalencias mediante
+                            AST y SymPy.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div>
+
+                <div class="d-flex align-items-start gap-3">
+
+                    <i class="bi bi-lightbulb fs-3 text-warning"></i>
+
+                    <div>
+
+                        <strong>
+
+                            Apoyo al docente
+
+                        </strong>
+
+                        <div class="text-muted small">
+
+                            Genera información para apoyar
+                            el seguimiento académico.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+        <!-- KPI -->
+
+        <div class="col-md-3">
+
+
+            <div class="card p-4 h-100">
+
+
+                <div class="card-body">
+
+
+                    <div class="d-flex justify-content-between">
+
+
+                        <div>
+
+
+                            <h6 class="text-muted">
+
+                                Precisión OCR
+
+                            </h6>
+
+
+                            <h2 class="fw-bold">
+
+                               {{ metricas.promedio_confianza }}%
+
+                            </h2>
+
+
+                        </div>
+
+
+                        <div>
+
+                            <i
+                                class="bi bi-camera"
+                                style="
+                                    font-size: 2rem;
+                                    color: #16a34a;
+                                "
+                            ></i>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+
+
+        <!-- KPI -->
+
+        <div class="col-md-3">
+
+
+            <div class="card p-4 h-100">
+
+
+                <div class="card-body">
+
+
+                    <div class="d-flex justify-content-between">
+
+
+                        <div>
+
+
+                            <h6 class="text-muted">
+
+                                Respuestas correctas
+
+                            </h6>
+
+
+                            <h2 class="fw-bold">
+
+                                {{ metricas.total_correctos }}
+
+                            </h2>
+
+
+                        </div>
+
+
+                        <div>
+
+                            <i
+                                class="bi bi-lightbulb"
+                                style="
+                                    font-size: 2rem;
+                                    color: #ca8a04;
+                                "
+                            ></i>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+    <!-- ================================================= -->
+<!-- GRÁFICOS ANALÍTICOS -->
+<!-- ================================================= -->
+
+<div class="row g-4 mb-5">
+
+
+    <!-- ============================================= -->
+    <!-- CORRECTOS VS INCORRECTOS -->
+    <!-- ============================================= -->
+
+    <div class="col-md-6">
+
+
+        <div class="card p-4 h-100">
+
+
+            <div class="card-body">
+
+
+                <div class="mb-4">
+
+
+                    <h3 class="fw-bold">
+
+                        <i class="bi bi-pie-chart"></i>
+
+                        Rendimiento General
+
+                    </h3>
+
+
+                    <p class="text-muted">
+
+                        Este gráfico muestra la proporción
+                        entre respuestas correctas e incorrectas
+                        detectadas por el sistema inteligente.
+
+                    </p>
+
+
+                </div>
+
+
+                <div style="height:300px;">
+    <canvas id="rendimientoChart"></canvas>
+</div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ============================================= -->
+    <!-- ERRORES FRECUENTES -->
+    <!-- ============================================= -->
+
+    <div class="col-md-6">
+
+
+        <div class="card p-4 h-100">
+
+
+            <div class="card-body">
+
+
+                <div class="mb-4">
+
+
+                    <h3 class="fw-bold">
+
+                        <i class="bi bi-bar-chart"></i>
+
+                        Errores Frecuentes
+
+                    </h3>
+
+
+                    <p class="text-muted">
+
+                        Visualización de los errores
+                        matemáticos más detectados durante
+                        el análisis algebraico.
+
+                    </p>
+
+
+                </div>
+
+
+                <div style="height:300px;">
+    <canvas id="erroresChart"></canvas>
+</div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+<!-- ================================================= -->
+<!-- INTERPRETACIÓN PEDAGÓGICA -->
+<!-- ================================================= -->
+
+<div class="row g-4 mt-2">
+
+
+    <!-- ============================================= -->
+    <!-- ANÁLISIS GENERAL -->
+    <!-- ============================================= -->
+
+    <div class="col-md-6">
+
+
+        <div class="card p-4 h-100">
+
+
+            <div class="card-body">
+
+
+                <h3 class="fw-bold mb-3">
+
+                    <i class="bi bi-clipboard-data"></i>
+
+                    <p>
+
+    El análisis realizado permitió identificar patrones de desempeño,
+    errores frecuentes y necesidades de reforzamiento académico en los
+    estudiantes evaluados.
+
+</p>
+
+                </h3>
+
+
+                <p class="text-muted">
+
+                    Este panel resume el comportamiento
+                    general detectado durante los análisis
+                    matemáticos realizados por el sistema.
+
+                </p>
+
+
+                <hr>
+
+
+                {% if metricas.total_incorrectos > metricas.total_correctos %}
+
+                    <div class="alert alert-danger">
+
+
+                        <strong>
+
+                            Riesgo detectado:
+
+                        </strong>
+
+                        Existe una mayor cantidad
+                        de respuestas incorrectas,
+                        lo cual podría indicar
+                        dificultades algebraicas
+                        en los estudiantes.
+
+                    </div>
+
+                {% else %}
+
+                    <div class="alert alert-success">
+
+
+                        <strong>
+
+                            Buen desempeño:
+
+                        </strong>
+
+                        El sistema detecta un
+                        predominio de respuestas
+                        correctas en los análisis
+                        realizados.
+
+                    </div>
+
+                {% endif %}
+
+
+                <p>
+                    Se identificaron patrones de error que permiten orientar acciones de reforzamiento académico y apoyar la toma de decisiones pedagógicas.
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ============================================= -->
+    <!-- RECOMENDACIÓN DOCENTE -->
+    <!-- ============================================= -->
+
+    <div class="col-md-6">
+
+
+        <div class="card p-4 h-100">
+
+
+            <div class="card-body">
+
+<h3 class="fw-bold mb-3">
+
+    <i class="bi bi-lightbulb"></i>
+
+    Recomendaciones Generadas
+
+</h3>
+
+<p class="text-muted">
+
+    Recomendaciones obtenidas a partir
+    de los errores detectados durante
+    el análisis automático.
+
+</p>
+
+<p class="text-muted">
+
+    Las recomendaciones fueron generadas automáticamente
+    a partir de los patrones de error identificados por el sistema.
+
+</p>
+<hr>
+
+<div class="alert alert-warning">
+
+    <ul class="mb-0">
+
+        <li>
+
+            Reforzar la resolución de
+            ecuaciones lineales.
+
+        </li>
+
+        <li>
+
+            Practicar operaciones con
+            signos positivos y negativos.
+
+        </li>
+
+        <li>
+
+            Fortalecer procedimientos de
+            simplificación algebraica.
+
+        </li>
+
+        <li>
+
+            Promover la resolución paso
+            a paso de ejercicios.
+
+        </li>
+
+    </ul>
+
+</div>
+
+<p>
+
+    Estas recomendaciones permiten al
+    docente identificar dificultades
+    recurrentes y orientar actividades
+    de reforzamiento académico.
+
+</p>
+
+
+                <p class="text-muted">
+
+                    Sugerencias generadas automáticamente
+                    para apoyar el proceso de enseñanza
+                    y reforzamiento académico.
+
+                </p>
+
+
+                <hr>
+
+
+                
+
+
+                
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+<!-- ================================================= -->
+<!-- PANEL PEDAGÓGICO AVANZADO -->
+<!-- ================================================= -->
+
+<div class="row g-4 mb-5">
+
+
+   
+
+
+    
+<!-- ================================================= -->
+<!-- VALIDACIÓN Y SEVERIDAD -->
+<!-- ================================================= -->
+
+<div class="row g-4 mb-5">
+
+    <div class="col-md-6">
+
+        <div class="card p-4 h-100">
+
+            <div class="card-body">
+
+                <h3 class="fw-bold mb-4">
+
+                    <i class="bi bi-exclamation-triangle"></i>
+
+                    Principales Errores Detectados
+
+                </h3>
+
+                <hr>
+<p class="text-muted">
+
+    Errores más recurrentes identificados durante el análisis automático
+    de procedimientos matemáticos realizados por los estudiantes.
+
+</p>
+                <ol>
+
+                    <li>Error de signos.</li>
+
+                    <li>Despeje incorrecto.</li>
+
+                    <li>Operaciones algebraicas incorrectas.</li>
+
+                    <li>Procedimientos incompletos.</li>
+
+                    <li>Errores de simplificación.</li>
+
+                </ol>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+        <div class="card p-4 h-100">
+
+            <div class="card-body">
+
+                <h3 class="fw-bold mb-4">
+
+                    <i class="bi bi-diagram-3"></i>
+
+                    Flujo del Modelo Computacional
+
+                </h3>
+
+                <hr>
+
+                <div class="text-center">
+
+                    <h5>
+
+                        Captura del examen
+
+                        ↓
+
+                        Reconocimiento OCR
+
+                        ↓
+
+                        Análisis AST
+
+                        ↓
+
+                        Validación con SymPy
+
+                        ↓
+
+                        Clasificación de errores
+
+                        ↓
+
+                        Generación de recomendaciones
+
+                    </h5>
+
+                </div>
+
+                <p class="text-muted mt-4">
+
+                    El sistema procesa automáticamente
+                    exámenes digitalizados, identifica
+                    procedimientos matemáticos, valida
+                    transformaciones algebraicas y genera
+                    recomendaciones pedagógicas.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<div class="row g-4 mb-5">
+
+
+    <!-- VALIDACIÓN -->
+
+    <div class="col-md-6">
+
+
+        <div class="card p-4 h-100">
+
+
+            <div class="card-body">
+
+
+                <h3 class="fw-bold mb-4">
+
+                    <i class="bi bi-check2-square"></i>
+
+                    Validación Algebraica
+
+                </h3>
+
+
+                <div class="row text-center">
+
+
+                    <div class="col-6">
+
+
+                        <h2 class="fw-bold text-success">
+
+                            {{ metricas.validaciones_correctas }}
+
+                        </h2>
+
+
+                        <small class="text-muted">
+
+                            Correctas
+
+                        </small>
+
+
+                    </div>
+
+
+                    <div class="col-6">
+
+
+                        <h2 class="fw-bold text-danger">
+
+                            {{ metricas.validaciones_incorrectas }}
+
+                        </h2>
+
+
+                        <small class="text-muted">
+
+                            Incorrectas
+
+                        </small>
+
+<div class="text-center mt-3">
+
+    <small class="text-muted">
+
+        Total de validaciones realizadas:
+        {{ metricas.total_correctos + metricas.total_incorrectos }}
+
+    </small>
+
+</div>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    
+
+    <!-- ================================================= -->
+    <!-- MÓDULOS -->
+    <!-- ================================================= -->
+
+    <div class="row g-4">
+
+
+        <!-- ANÁLISIS -->
+
+        <div class="col-md-4">
+
+
+            <div class="card p-4 h-100">
+
+
+                <div class="card-body">
+
+
+                    <div class="mb-3">
+
+                        <i
+                            class="bi bi-calculator"
+                            style="
+                                font-size: 2rem;
+                                color: #2563eb;
+                            "
+                        ></i>
+
+                    </div>
+
+
+                    <h4 class="fw-bold">
+
+                        Análisis Algebraico
+
+                    </h4>
+
+
+                    <p class="text-muted">
+
+                        Validación matemática mediante
+                        AST y SymPy para detectar
+                        errores algebraicos automáticamente.
+
+                    </p>
+
+
+                    <a
+                        href="/resultados/analizar"
+                        class="btn btn-primary"
+                    >
+
+                        Ir al módulo
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- RESULTADOS -->
+
+        <div class="col-md-4">
+
+
+            <div class="card p-4 h-100">
+
+
+                <div class="card-body">
+
+
+                    <div class="mb-3">
+
+                        <i
+                            class="bi bi-graph-up"
+                            style="
+                                font-size: 2rem;
+                                color: #16a34a;
+                            "
+                        ></i>
+
+                    </div>
+
+
+                    <h4 class="fw-bold">
+
+                        Resultados Inteligentes
+
+                    </h4>
+
+
+                    <p class="text-muted">
+
+                        Métricas pedagógicas,
+                        alertas académicas y
+                        recomendaciones automáticas.
+
+                    </p>
+
+
+                    <a
+                        href="#"
+                        class="btn btn-success"
+                    >
+
+                        Ver resultados
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- REPORTES -->
+
+        <div class="col-md-4">
+
+
+            <div class="card p-4 h-100">
+
+
+                <div class="card-body">
+
+
+                    <div class="mb-3">
+
+                        <i
+                            class="bi bi-file-earmark-text"
+                            style="
+                                font-size: 2rem;
+                                color: #ca8a04;
+                            "
+                        ></i>
+
+                    </div>
+
+
+                    <h4 class="fw-bold">
+
+                        Reportes Pedagógicos
+
+                    </h4>
+
+
+                    <p class="text-muted">
+
+                        Generación de reportes académicos,
+                        desempeño estudiantil y seguimiento.
+
+                    </p>
+
+
+                    <a
+                        href="#"
+                        class="btn btn-warning"
+                    >
+
+                        Ver reportes
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+<script>
+
+
+    // =====================================================
+    // RENDIMIENTO GENERAL
+    // =====================================================
+
+        const ctxRendimiento = document.getElementById(
+            'graficoRendimiento'
+        );
+
+
+        new Chart(
+
+            ctxRendimiento,
+
+            {
+
+                type: 'doughnut',
+
+                data: {
+
+                    labels: [
+
+                        'Correctos',
+
+                        'Incorrectos'
+                    ],
+
+                    datasets: [
+
+                        {
+
+                            data: [
+
+                                {{ metricas.total_correctos }},
+
+                                {{ metricas.total_incorrectos }}
+                            ],
+
+                            borderWidth: 1
+                        }
+                    ]
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    plugins: {
+
+                        legend: {
+
+                            position: 'bottom'
+                        }
+                    }
+                }
+            }
+        );
+
+
+        // =====================================================
+        // ERRORES FRECUENTES
+        // =====================================================
+
+        const erroresLabels = [
+
+            {% for error, cantidad in metricas.errores_frecuentes %}
+
+                '{{ error }}',
+
+            {% endfor %}
+        ];
+
+
+        const erroresData = [
+
+            {% for error, cantidad in metricas.errores_frecuentes %}
+
+                {{ cantidad | default(0) }},
+
+            {% endfor %}
+        ];
+
+
+        const ctxErrores = document.getElementById(
+            'graficoErrores'
+        );
+
+
+        new Chart(
+
+            ctxErrores,
+
+            {
+
+                type: 'bar',
+
+                data: {
+
+                    labels: erroresLabels,
+
+                    datasets: [
+
+                        {
+
+                            label: 'Frecuencia',
+
+                            data: erroresData,
+
+                            borderWidth: 1
+                        }
+                    ]
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true
+                        }
+                    }
+                }
+            }
+        );
+
+    </script>
+
+{% endblock %}

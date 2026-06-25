@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-5">
+
+        <h1 class="section-title">
+
+            <i class="bi bi-journal-text"></i>
+
+            {{ evaluacion.titulo }}
+
+        </h1>
+
+        <p class="section-subtitle">
+
+            {{ evaluacion.descripcion }}
+
+        </p>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- INFORMACIÓN -->
+    <!-- ================================================= -->
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- SECCIÓN -->
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <i
+                        class="bi bi-diagram-3"
+                        style="
+                            font-size: 3rem;
+                            color: #2563eb;
+                        "
+                    ></i>
+
+                    <h5 class="fw-bold mt-3">
+
+                        Sección
+
+                    </h5>
+
+                    <h3>
+
+                        {{ evaluacion.seccion.nombre }}
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ESTUDIANTES -->
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <i
+                        class="bi bi-people"
+                        style="
+                            font-size: 3rem;
+                            color: #16a34a;
+                        "
+                    ></i>
+
+                    <h5 class="fw-bold mt-3">
+
+                        Estudiantes
+
+                    </h5>
+
+                    <h3>
+
+                        {{ evaluacion.seccion.estudiantes|length }}
+
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ESTADO -->
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <i
+                        class="bi bi-cpu"
+                        style="
+                            font-size: 3rem;
+                            color: #9333ea;
+                        "
+                    ></i>
+
+                    <h5 class="fw-bold mt-3">
+
+                        Estado
+
+                    </h5>
+
+                    <span class="badge bg-success fs-6">
+
+                        Activa
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- LISTA ESTUDIANTES -->
+    <!-- ================================================= -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+
+            <div class="d-flex justify-content-between mb-4">
+
+                <h4 class="fw-bold">
+
+                    <i class="bi bi-people"></i>
+
+                    Estudiantes de la evaluación
+
+                </h4>
+
+
+<a
+    href="{{ url_for(
+        'analysis.vista_analisis',
+        evaluacion_id=evaluacion.id
+    ) }}"
+    class="btn btn-primary"
+>
+
+                    <i class="bi bi-upload"></i>
+
+                    Cargar examen
+
+                </a>
+
+            </div>
+
+
+            <table class="table table-hover align-middle">
+
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>Código</th>
+
+                        <th>Nombres</th>
+
+                        <th>Apellidos</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for estudiante in evaluacion.seccion.estudiantes %}
+
+                    <tr>
+
+                        <td>
+
+                            {{ estudiante.codigo }}
+
+                        </td>
+
+                        <td>
+
+                            {{ estudiante.nombres }}
+
+                        </td>
+
+                        <td>
+
+                            {{ estudiante.apellidos }}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <div class="mb-5 d-flex justify-content-between align-items-center">
+
+
+        <div>
+
+
+            <h1 class="section-title">
+
+                <i class="bi bi-calendar-range"></i>
+
+                {{ bimestre.nombre }}
+
+            </h1>
+
+
+            <p class="section-subtitle">
+
+                Gestión de evaluaciones,
+                competencias y análisis
+                pedagógico del periodo.
+
+            </p>
+
+
+        </div>
+
+
+        <span class="badge bg-primary p-3">
+
+            {{ evaluaciones|length }}
+            evaluaciones
+
+        </span>
+
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- EVALUACIONES -->
+    <!-- ================================================= -->
+
+    <div class="row g-4">
+
+
+        {% for evaluacion in evaluaciones %}
+
+
+        <div class="col-md-6 col-xl-4">
+
+
+            <div class="card border-0 shadow-sm h-100">
+
+
+                <div class="card-body p-4">
+
+
+                    <!-- TITLE -->
+
+                    <div class="mb-3">
+
+
+                        <h4 class="fw-bold">
+
+
+                            {{ evaluacion.titulo }}
+
+
+                        </h4>
+
+
+                        <span class="badge bg-info text-dark">
+
+
+                            {{ evaluacion.tipo_evaluacion }}
+
+
+                        </span>
+
+
+                    </div>
+
+
+                    <!-- COMPETENCIA -->
+
+                    <div class="mb-3">
+
+
+                        <small class="text-muted">
+
+                            Competencia
+
+                        </small>
+
+
+                        <div class="fw-semibold">
+
+
+                            {{ evaluacion.competencia
+                               or 'No definida' }}
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- ESTADO -->
+
+                    <div class="mb-3">
+
+
+                        <small class="text-muted">
+
+                            Estado
+
+                        </small>
+
+
+                        <div>
+
+
+                            <span class="badge bg-success">
+
+                                {{ evaluacion.estado }}
+
+                            </span>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- FECHA -->
+
+                    <div class="mb-4">
+
+
+                        <small class="text-muted">
+
+                            Fecha evaluación
+
+                        </small>
+
+
+                        <div>
+
+
+                            {{ evaluacion.fecha_evaluacion }}
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- BTN -->
+
+                    <a
+                        href="{{ url_for(
+                        'docentes.detalle_evaluacion',
+                        evaluacion_id=evaluacion.id
+                    ) }}"
+                        class="btn btn-primary w-100"
+                    >
+
+                        <i class="bi bi-arrow-right-circle"></i>
+
+                        Ingresar Evaluación
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}
