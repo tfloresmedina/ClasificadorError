@@ -94,6 +94,8 @@ docente_bp = Blueprint(
 
 
 @docente_bp.route('/')
+@login_required
+@role_required('administrador', 'docente')
 def listar():
 
     docentes = (
@@ -110,6 +112,8 @@ def listar():
     '/crear',
     methods=['GET', 'POST']
 )
+@login_required
+@role_required('administrador')
 def crear():
 
     if request.method == 'POST':
@@ -160,6 +164,8 @@ def detalle(id):
     '/editar/<int:id>',
     methods=['GET', 'POST']
 )
+@login_required
+@role_required('administrador')
 def editar(id):
 
     docente = (
@@ -205,6 +211,8 @@ def editar(id):
     '/eliminar/<int:id>',
     methods=['POST']
 )
+@login_required
+@role_required('administrador')
 def eliminar(id):
 
     docente = (

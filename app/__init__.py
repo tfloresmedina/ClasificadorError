@@ -59,6 +59,10 @@ from app.routes.evaluacion_routes import (
     evaluacion_bp
 )
 
+from app.routes.reportes_routes import (
+    resultados_bp as reportes_bp
+)
+
 migrate = Migrate()
 
 login_manager = LoginManager()
@@ -110,6 +114,10 @@ def create_app():
 
     app.register_blueprint(
     evaluacion_bp
+    )
+
+    app.register_blueprint(
+    reportes_bp
     )
     
         # =====================================================

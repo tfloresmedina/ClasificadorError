@@ -15,11 +15,11 @@ from app.services.analysis_service import (
 
 resultados_bp = Blueprint(
 
-    'analysis',
+    'reportes',
 
     __name__,
 
-    url_prefix='/resultados'
+    url_prefix='/reportes'
 )
 
 
@@ -85,7 +85,7 @@ def procesar_analisis():
             return redirect(
 
                 url_for(
-                    'analysis.vista_analisis'
+                    'reportes.vista_analisis'
                 )
             )
 
@@ -102,7 +102,7 @@ def procesar_analisis():
             return redirect(
 
                 url_for(
-                    'analysis.vista_analisis'
+                    'reportes.vista_analisis'
                 )
             )
 
@@ -152,6 +152,6 @@ def procesar_analisis():
         return redirect(
 
             url_for(
-                'analysis.vista_analisis'
+                'reportes.vista_analisis'
             )
         )

@@ -15,6 +15,7 @@ from app.models.seccion import Seccion
 from app.services.ocr_service import (
     OCRService
 )
+from flask_login import current_user, login_required
 
 from app.services.math_normalizer_service import (
     MathNormalizerService
@@ -62,6 +63,7 @@ def listar_evaluaciones():
     '/crear',
     methods=['GET', 'POST']
 )
+@login_required
 def crear_evaluacion():
 
     secciones = (
@@ -311,7 +313,7 @@ def crear_evaluacion():
                     'grado_id'
                 ],
 
-                docente_id=1,
+                docente_id=current_user.id,
 
                 seccion_id=request.form[
                     'seccion_id'

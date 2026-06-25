@@ -67,7 +67,7 @@ from app.services.gemini_exam_service import (
 # =========================================================
 
 resultados_bp = Blueprint(
-    'analysis',
+    'resultados',
     __name__,
     url_prefix='/resultados'
 )
@@ -315,7 +315,7 @@ def procesar_analisis():
 
                 return redirect(
                     url_for(
-                        'analysis.vista_analisis',
+                        'resultados.vista_analisis',
                         evaluacion_id=evaluacion_id
                     )
                 )
@@ -396,7 +396,7 @@ def procesar_analisis():
 
             return redirect(
                 url_for(
-                    'analysis.vista_analisis',
+                    'resultados.vista_analisis',
                     evaluacion_id=evaluacion_id
                 )
             )
@@ -424,7 +424,7 @@ def procesar_analisis():
 
             return redirect(
                 url_for(
-                    'analysis.vista_analisis',
+                    'resultados.vista_analisis',
                     evaluacion_id=evaluacion_id
                 )
             )
@@ -448,7 +448,7 @@ def procesar_analisis():
 
             return redirect(
                 url_for(
-                    'analysis.vista_analisis',
+                    'resultados.vista_analisis',
                     evaluacion_id=evaluacion_id
                 )
             )
@@ -646,7 +646,7 @@ def procesar_analisis():
 
         return redirect(
             url_for(
-                'analysis.vista_analisis',
+                'resultados.vista_analisis',
                 evaluacion_id=evaluacion_id
             )
         )
@@ -671,7 +671,7 @@ def procesar_analisis():
 
     return redirect(
         url_for(
-            'analysis.vista_analisis',
+            'resultados.vista_analisis',
             evaluacion_id=evaluacion_id
         )
     )
@@ -720,7 +720,7 @@ def detalle_resultado(resultado_id):
         flash('Resultado no encontrado.', 'danger')
 
         return redirect(
-            url_for('analysis.historial_resultados')
+            url_for('resultados.historial_resultados')
         )
 
     import json
@@ -797,7 +797,7 @@ def generar_pdf(resultado_id):
         flash('Resultado no encontrado.', 'danger')
 
         return redirect(
-            url_for('analysis.historial_resultados')
+            url_for('resultados.historial_resultados')
         )
 
     ruta_pdf = f'reportes/reporte_{resultado.id}.pdf'
