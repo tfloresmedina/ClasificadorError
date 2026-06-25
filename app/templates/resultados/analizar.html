@@ -142,7 +142,7 @@
 
                             <a
                                 href="{{ url_for(
-                                    'analysis.vista_analisis',
+                                    'resultados.vista_analisis',
                                     evaluacion_id=evaluacion.id
                                 ) }}"
                                 class="btn btn-primary btn-sm"
@@ -737,7 +737,7 @@
     method="POST"
     enctype="multipart/form-data"
     id="form-analisis"
-    action="{{ url_for('analysis.procesar_analisis') }}"
+    action="{{ url_for('resultados.procesar_analisis') }}"
 >
 
                 <!-- ESTUDIANTE -->
