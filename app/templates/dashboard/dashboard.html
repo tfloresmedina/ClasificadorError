@@ -629,7 +629,7 @@
 
 
                 <div style="height:300px;">
-    <canvas id="rendimientoChart"></canvas>
+    <canvas id="graficoRendimiento"></canvas>
 </div>
 
 
@@ -680,7 +680,7 @@
 
 
                 <div style="height:300px;">
-    <canvas id="erroresChart"></canvas>
+    <canvas id="graficoErrores"></canvas>
 </div>
 
 
@@ -1345,6 +1345,8 @@
                                 {{ metricas.total_incorrectos }}
                             ],
 
+                            backgroundColor: ['#16a34a', '#dc2626'],
+
                             borderWidth: 1
                         }
                     ]
@@ -1414,6 +1416,8 @@
                             label: 'Frecuencia',
 
                             data: erroresData,
+
+                            backgroundColor: '#2563eb',
 
                             borderWidth: 1
                         }
