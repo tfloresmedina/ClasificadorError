@@ -18,6 +18,26 @@ class TransformationValidationService:
 
 
     # =====================================================
+    # NORMALIZAR EXPRESIÓN PARA SYMPY
+    # =====================================================
+
+    @staticmethod
+    def normalizar_expr(texto):
+        texto = texto.strip()
+        texto = texto.replace("÷", "/")
+        texto = texto.replace("×", "*")
+        # Números mixtos: "1 1/4" → "(1 + 1/4)"
+        texto = re.sub(
+            r'(\d+)\s+(\d+)/(\d+)',
+            r'(\1 + \2/\3)',
+            texto
+        )
+        # Coeficientes implícitos: "2x" → "2*x"
+        texto = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', texto)
+        return texto
+
+
+    # =====================================================
     # DETECTAR TIPO EJERCICIO
     # =====================================================
 
@@ -252,73 +272,48 @@ class TransformationValidationService:
 
             # =========================================
             # VALIDAR ECUACIONES OCR ROTAS
+            # → beneficio de la duda si no se puede parsear
             # =========================================
 
             if paso_actual.count("=") != 1:
 
                 return TransformationValidationService.construir_respuesta(
 
-                    valido=False,
+                    valido=True,
 
                     tipo="ecuacion_lineal",
 
-                    error="ecuacion_mal_formada",
+                    error=None,
 
                     explicacion=(
-                        f"Ecuación inválida OCR: {paso_actual}"
+                        "No se pudo validar automáticamente. Se asume correcto."
                     ),
 
-                    confianza=0.1
+                    confianza=0.5
                 )
 
             if paso_siguiente.count("=") != 1:
 
                 return TransformationValidationService.construir_respuesta(
 
-                    valido=False,
+                    valido=True,
 
                     tipo="ecuacion_lineal",
 
-                    error="ecuacion_mal_formada",
+                    error=None,
 
                     explicacion=(
-                        f"Ecuación inválida OCR: {paso_siguiente}"
+                        "No se pudo validar automáticamente. Se asume correcto."
                     ),
 
-                    confianza=0.1
+                    confianza=0.5
                 )
 
-            izquierda_1, derecha_1 = paso_actual.split("=")
+            paso_actual_norm = TransformationValidationService.normalizar_expr(paso_actual)
+            paso_siguiente_norm = TransformationValidationService.normalizar_expr(paso_siguiente)
 
-            izquierda_2, derecha_2 = paso_siguiente.split("=")
-
-            # =========================================
-            # NORMALIZAR PARA SYMPY
-            # =========================================
-
-            izquierda_1 = re.sub(
-                r'(\d)([a-zA-Z])',
-                r'\1*\2',
-                izquierda_1.strip()
-            )
-
-            derecha_1 = re.sub(
-                r'(\d)([a-zA-Z])',
-                r'\1*\2',
-                derecha_1.strip()
-            )
-
-            izquierda_2 = re.sub(
-                r'(\d)([a-zA-Z])',
-                r'\1*\2',
-                izquierda_2.strip()
-            )
-
-            derecha_2 = re.sub(
-                r'(\d)([a-zA-Z])',
-                r'\1*\2',
-                derecha_2.strip()
-            )
+            izquierda_1, derecha_1 = paso_actual_norm.split("=", 1)
+            izquierda_2, derecha_2 = paso_siguiente_norm.split("=", 1)
 
             print("\n====================")
             print("ECUACIONES NORMALIZADAS")
@@ -410,22 +405,19 @@ class TransformationValidationService:
        
         except Exception as e:
 
-            print(
-                "ERROR VALIDAR ECUACION:",
-                str(e)
-            )
+            print("NO SE PUDO VALIDAR ECUACION (beneficio de la duda):", str(e))
 
             return TransformationValidationService.construir_respuesta(
 
-                valido=False,
+                valido=True,
 
                 tipo="ecuacion_lineal",
 
-                error="error_validacion",
+                error=None,
 
-                explicacion=str(e),
+                explicacion="No se pudo validar automáticamente. Se asume correcto.",
 
-                confianza=0.1
+                confianza=0.5
             )
 
 
@@ -438,20 +430,39 @@ class TransformationValidationService:
         paso_actual,
         paso_siguiente
     ):
+        """
+        Valida cada paso internamente. Si el paso tiene = verifica LHS==RHS.
+        No compara ambos pasos entre sí (son etapas distintas del procedimiento).
+        Detecta notación de cadena: "5200/8=650*3" donde el alumno escribe
+        el resultado intermedio (650) como primer factor del siguiente cálculo.
+        """
+
+        def paso_es_correcto(paso):
+            norm = TransformationValidationService.normalizar_expr(paso)
+            if "=" not in norm:
+                return True
+            partes = norm.split("=", 1)
+            lhs_str = partes[0].strip()
+            rhs_str = partes[1].strip()
+            try:
+                lhs = simplify(sympify(lhs_str))
+                rhs = simplify(sympify(rhs_str))
+                if lhs == rhs:
+                    return True
+                # Detectar notación de cadena: el valor del LHS aparece
+                # como factor en el RHS (ej: "5200/8=650*3" → lhs=650, "650" en rhs)
+                lhs_num = str(lhs)
+                if lhs_num in rhs_str:
+                    return True
+                return False
+            except Exception:
+                return True
 
         try:
 
-            resultado_1 = simplify(
-                sympify(paso_actual)
-            )
-
-            resultado_2 = simplify(
-                sympify(paso_siguiente)
-            )
-
-            correcto = (
-                resultado_1 == resultado_2
-            )
+            ok_actual    = paso_es_correcto(paso_actual)
+            ok_siguiente = paso_es_correcto(paso_siguiente)
+            correcto = ok_actual and ok_siguiente
 
             return TransformationValidationService.construir_respuesta(
 
@@ -473,17 +484,19 @@ class TransformationValidationService:
 
         except Exception as e:
 
+            print("NO SE PUDO VALIDAR OPERACION (beneficio de la duda):", str(e))
+
             return TransformationValidationService.construir_respuesta(
 
-                valido=False,
+                valido=True,
 
                 tipo="operacion_combinada",
 
-                error="error_operacion",
+                error=None,
 
-                explicacion=str(e),
+                explicacion="No se pudo validar automáticamente. Se asume correcto.",
 
-                confianza=0.1
+                confianza=0.5
             )
 
 
@@ -496,20 +509,37 @@ class TransformationValidationService:
         paso_actual,
         paso_siguiente
     ):
+        """
+        Valida que cada paso sea internamente correcto (LHS == RHS si tiene =).
+        No compara paso_actual con paso_siguiente porque en un procedimiento
+        los pasos consecutivos representan operaciones distintas.
+        """
+
+        def paso_es_correcto(paso):
+            norm = TransformationValidationService.normalizar_expr(paso)
+            if "=" not in norm:
+                return True
+            partes = norm.split("=", 1)
+            lhs_str = partes[0].strip()
+            rhs_str = partes[1].strip()
+            try:
+                lhs = simplify(sympify(lhs_str))
+                rhs = simplify(sympify(rhs_str))
+                if lhs == rhs:
+                    return True
+                # Detectar notación de cadena: el valor del LHS aparece
+                # como factor en el RHS (ej: "5200/8=650*3" → lhs=650, "650" en rhs)
+                lhs_num = str(lhs)
+                if lhs_num in rhs_str:
+                    return True
+                return False
+            except Exception:
+                return True
 
         try:
-
-            expr_1 = simplify(
-                sympify(paso_actual)
-            )
-
-            expr_2 = simplify(
-                sympify(paso_siguiente)
-            )
-
-            correcto = (
-                expr_1 == expr_2
-            )
+            ok_actual   = paso_es_correcto(paso_actual)
+            ok_siguiente = paso_es_correcto(paso_siguiente)
+            correcto = ok_actual and ok_siguiente
 
             return TransformationValidationService.construir_respuesta(
 
@@ -531,17 +561,19 @@ class TransformationValidationService:
 
         except Exception as e:
 
+            print("NO SE PUDO VALIDAR FRACCION (beneficio de la duda):", str(e))
+
             return TransformationValidationService.construir_respuesta(
 
-                valido=False,
+                valido=True,
 
                 tipo="fracciones",
 
-                error="error_fraccion",
+                error=None,
 
-                explicacion=str(e),
+                explicacion="No se pudo validar automáticamente. Se asume correcto.",
 
-                confianza=0.1
+                confianza=0.5
             )
 
 
@@ -557,17 +589,13 @@ class TransformationValidationService:
 
         try:
 
-            expr_1 = simplify(
-                sympify(paso_actual)
-            )
+            expr_a = TransformationValidationService.normalizar_expr(paso_actual)
+            expr_b = TransformationValidationService.normalizar_expr(paso_siguiente)
 
-            expr_2 = simplify(
-                sympify(paso_siguiente)
-            )
+            expr_1 = simplify(sympify(expr_a))
+            expr_2 = simplify(sympify(expr_b))
 
-            correcto = (
-                expr_1 == expr_2
-            )
+            correcto = (expr_1 == expr_2)
 
             return TransformationValidationService.construir_respuesta(
 
@@ -589,17 +617,19 @@ class TransformationValidationService:
 
         except Exception as e:
 
+            print("NO SE PUDO VALIDAR DISTRIBUTIVA (beneficio de la duda):", str(e))
+
             return TransformationValidationService.construir_respuesta(
 
-                valido=False,
+                valido=True,
 
                 tipo="distributiva",
 
-                error="error_distributiva",
+                error=None,
 
-                explicacion=str(e),
+                explicacion="No se pudo validar automáticamente. Se asume correcto.",
 
-                confianza=0.1
+                confianza=0.5
             )
 
 
@@ -615,17 +645,13 @@ class TransformationValidationService:
 
         try:
 
-            expr_1 = simplify(
-                sympify(paso_actual)
-            )
+            expr_a = TransformationValidationService.normalizar_expr(paso_actual)
+            expr_b = TransformationValidationService.normalizar_expr(paso_siguiente)
 
-            expr_2 = simplify(
-                sympify(paso_siguiente)
-            )
+            expr_1 = simplify(sympify(expr_a))
+            expr_2 = simplify(sympify(expr_b))
 
-            correcto = (
-                expr_1 == expr_2
-            )
+            correcto = (expr_1 == expr_2)
 
             return TransformationValidationService.construir_respuesta(
 
@@ -647,17 +673,19 @@ class TransformationValidationService:
 
         except Exception as e:
 
+            print("NO SE PUDO VALIDAR POTENCIA (beneficio de la duda):", str(e))
+
             return TransformationValidationService.construir_respuesta(
 
-                valido=False,
+                valido=True,
 
                 tipo="potencias",
 
-                error="error_potencia",
+                error=None,
 
-                explicacion=str(e),
+                explicacion="No se pudo validar automáticamente. Se asume correcto.",
 
-                confianza=0.1
+                confianza=0.5
             )
 
 

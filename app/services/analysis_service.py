@@ -377,8 +377,6 @@ class AnalysisService:
         # =====================================
         # DETECCIÓN DE EJERCICIOS
         # =====================================
-
-
         print("\n=====================")
         print("TEXTO MATEMATICO FINAL")
         print("=====================")
@@ -407,10 +405,6 @@ class AnalysisService:
                 )
             )
         
-        print("\n=====================")
-        print("EJERCICIOS CRUDOS")
-        print("=====================")
-
         for i, e in enumerate(
             ejercicios,
             start=1
