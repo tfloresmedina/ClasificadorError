@@ -42,7 +42,7 @@ with app.app_context():
 
         admin = Usuario(
 
-            nombres='Administrador TAMARA',
+            nombres='Administrador I.E Elvira García Y García',
 
             email='admin@tamara.com',
 

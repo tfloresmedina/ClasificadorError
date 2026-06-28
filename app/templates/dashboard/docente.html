@@ -25,7 +25,7 @@
 
             Panel institucional para monitorear
             el rendimiento académico detectado
-            por el sistema inteligente TAMARA.
+            por el I.E Elvira García Y García.
 
         </p>
 
@@ -367,66 +367,35 @@
 </div>
 
 
-<!-- ===================================================== -->
-<!-- CHART -->
-<!-- ===================================================== -->
+{% endblock %}
 
+{% block scripts %}
 <script>
+    (function() {
+        const canvas = document.getElementById('graficoDocente');
+        if (!canvas) return;
 
-
-    const ctxDocente = document.getElementById(
-        'graficoDocente'
-    );
-
-
-    new Chart(
-
-        ctxDocente,
-
-        {
-
+        new Chart(canvas, {
             type: 'doughnut',
-
             data: {
-
-                labels: [
-
-                    'Correctos',
-
-                    'Incorrectos'
-                ],
-
-                datasets: [
-
-                    {
-
-                        data: [
-
-                            {{ metricas.correctos }},
-
-                            {{ metricas.incorrectos }}
-                        ],
-
-                        borderWidth: 1
-                    }
-                ]
+                labels: ['Correctos', 'Incorrectos'],
+                datasets: [{
+                    data: [
+                        {{ metricas.correctos | default(0) }},
+                        {{ metricas.incorrectos | default(0) }}
+                    ],
+                    backgroundColor: ['#16a34a', '#dc2626'],
+                    borderWidth: 1
+                }]
             },
-
             options: {
-
                 responsive: true,
-
+                maintainAspectRatio: false,
                 plugins: {
-
-                    legend: {
-
-                        position: 'bottom'
-                    }
+                    legend: { position: 'bottom' }
                 }
             }
-        }
-    );
-
+        });
+    })();
 </script>
-
 {% endblock %}

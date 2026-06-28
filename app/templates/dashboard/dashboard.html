@@ -629,7 +629,7 @@
 
 
                 <div style="height:300px;">
-    <canvas id="rendimientoChart"></canvas>
+    <canvas id="graficoRendimiento"></canvas>
 </div>
 
 
@@ -680,7 +680,7 @@
 
 
                 <div style="height:300px;">
-    <canvas id="erroresChart"></canvas>
+    <canvas id="graficoErrores"></canvas>
 </div>
 
 
@@ -1305,136 +1305,91 @@
 
 </div>
 
-<script>
+{% endblock %}
 
+{% block scripts %}
+<script>
 
     // =====================================================
     // RENDIMIENTO GENERAL
     // =====================================================
 
-        const ctxRendimiento = document.getElementById(
-            'graficoRendimiento'
-        );
+    (function() {
+        const canvas = document.getElementById('graficoRendimiento');
+        if (!canvas) return;
 
-
-        new Chart(
-
-            ctxRendimiento,
-
-            {
-
-                type: 'doughnut',
-
-                data: {
-
-                    labels: [
-
-                        'Correctos',
-
-                        'Incorrectos'
+        new Chart(canvas, {
+            type: 'doughnut',
+            data: {
+                labels: ['Correctos', 'Incorrectos'],
+                datasets: [{
+                    data: [
+                        {{ metricas.total_correctos | default(0) }},
+                        {{ metricas.total_incorrectos | default(0) }}
                     ],
-
-                    datasets: [
-
-                        {
-
-                            data: [
-
-                                {{ metricas.total_correctos }},
-
-                                {{ metricas.total_incorrectos }}
-                            ],
-
-                            borderWidth: 1
-                        }
-                    ]
-                },
-
-                options: {
-
-                    responsive: true,
-
-                    plugins: {
-
-                        legend: {
-
-                            position: 'bottom'
-                        }
-                    }
+                    backgroundColor: ['#16a34a', '#dc2626'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
                 }
             }
-        );
+        });
+    })();
 
+    // =====================================================
+    // ERRORES FRECUENTES
+    // =====================================================
 
-        // =====================================================
-        // ERRORES FRECUENTES
-        // =====================================================
+    (function() {
+        const canvas = document.getElementById('graficoErrores');
+        if (!canvas) return;
 
         const erroresLabels = [
-
             {% for error, cantidad in metricas.errores_frecuentes %}
-
-                '{{ error }}',
-
+                '{{ error | replace("'", "\\'") }}',
             {% endfor %}
         ];
-
 
         const erroresData = [
-
             {% for error, cantidad in metricas.errores_frecuentes %}
-
                 {{ cantidad | default(0) }},
-
             {% endfor %}
         ];
 
-
-        const ctxErrores = document.getElementById(
-            'graficoErrores'
-        );
-
-
-        new Chart(
-
-            ctxErrores,
-
-            {
-
-                type: 'bar',
-
-                data: {
-
-                    labels: erroresLabels,
-
-                    datasets: [
-
-                        {
-
-                            label: 'Frecuencia',
-
-                            data: erroresData,
-
-                            borderWidth: 1
-                        }
-                    ]
-                },
-
-                options: {
-
-                    responsive: true,
-
-                    scales: {
-
-                        y: {
-
-                            beginAtZero: true
-                        }
-                    }
+        {% if metricas.errores_frecuentes %}
+        new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: erroresLabels,
+                datasets: [{
+                    label: 'Cantidad de errores',
+                    data: erroresData,
+                    backgroundColor: '#2563eb',
+                    borderRadius: 6,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
                 }
             }
-        );
+        });
+        {% else %}
+        canvas.parentElement.innerHTML =
+            '<div class="d-flex align-items-center justify-content-center h-100 text-muted">'
+            + '<div class="text-center"><i class="bi bi-bar-chart" style="font-size:3rem"></i>'
+            + '<p class="mt-2">Sin datos de errores aún</p></div></div>';
+        {% endif %}
+    })();
 
-    </script>
-
+</script>
 {% endblock %}

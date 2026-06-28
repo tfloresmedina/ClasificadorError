@@ -5,7 +5,8 @@ from flask import (
     redirect,
     url_for,
     flash,
-    send_file
+    send_file,
+    current_app
 )
 from flask import jsonify
 import json
@@ -61,13 +62,16 @@ from app.models.resultado_analisis import ResultadoAnalisis
 from app.services.gemini_exam_service import (
     GeminiExamService
 )
+from app.services.analysis_service_gemini import (
+    AnalysisServiceGemini
+)
 
 # =========================================================
 # BLUEPRINT
 # =========================================================
 
 resultados_bp = Blueprint(
-    'analysis',
+    'resultados',
     __name__,
     url_prefix='/resultados'
 )
@@ -277,13 +281,15 @@ def procesar_analisis():
 
         if imagen and imagen.filename:
 
-            ruta_imagen = f'uploads/{imagen.filename}'
-
             import os
 
-            os.makedirs('uploads', exist_ok=True)
-            os.makedirs('uploads/procesadas', exist_ok=True)
-            os.makedirs('uploads/ocr', exist_ok=True)
+            # Usar path absoluto igual que subir_examen para que Gemini encuentre el archivo
+            ruta_base_uploads = os.path.join(current_app.root_path, '..', 'uploads')
+            os.makedirs(ruta_base_uploads, exist_ok=True)
+            os.makedirs(os.path.join(ruta_base_uploads, 'procesadas'), exist_ok=True)
+            os.makedirs(os.path.join(ruta_base_uploads, 'ocr'), exist_ok=True)
+
+            ruta_imagen = os.path.join(ruta_base_uploads, imagen.filename)
 
             imagen.save(ruta_imagen)
 
@@ -315,7 +321,7 @@ def procesar_analisis():
 
                 return redirect(
                     url_for(
-                        'analysis.vista_analisis',
+                        'resultados.vista_analisis',
                         evaluacion_id=evaluacion_id
                     )
                 )
@@ -368,8 +374,10 @@ def procesar_analisis():
                 print(archivo_para_ocr)
                 print("====================")
 
+                # Usar siempre el archivo ORIGINAL para que Gemini vea
+                # el examen completo (la versión procesada puede estar recortada)
                 resultado_gemini = GeminiExamService.extraer_ejercicios(
-                    archivo_para_ocr
+                    ruta_imagen
                 )
 
                 print("\n====================")
@@ -396,62 +404,115 @@ def procesar_analisis():
 
             return redirect(
                 url_for(
-                    'analysis.vista_analisis',
+                    'resultados.vista_analisis',
                     evaluacion_id=evaluacion_id
                 )
             )
-
-        # =================================================
-        # CONTEXTO ACADÉMICO
-        # =================================================
-
-        estudiante_id = request.form.get('estudiante_id')
-
-        evaluacion = Evaluacion.query.get(evaluacion_id)
-
-        respuesta_correcta = None
-
-        # =================================================
-        # RESOLUCIÓN MODELO
-        # =================================================
-
-        if getattr(evaluacion, 'respuesta_modelo', None):
-            respuesta_correcta = evaluacion.respuesta_modelo
 
         if not respuesta_ocr:
-
             flash('No se pudo detectar contenido matemático.', 'danger')
+            return redirect(url_for('resultados.vista_analisis', evaluacion_id=evaluacion_id))
 
-            return redirect(
-                url_for(
-                    'analysis.vista_analisis',
-                    evaluacion_id=evaluacion_id
+        # =================================================
+        # EJECUTAR ANÁLISIS (ANTES de tocar BD)
+        # =================================================
+
+        evaluacion = Evaluacion.query.get(evaluacion_id)
+        respuesta_correcta = getattr(evaluacion, 'respuesta_modelo', None)
+
+        ejercicios_gemini_list = resultado_gemini.get("ejercicios", []) or []
+
+        print("\n====================")
+        print("EJERCICIOS GEMINI DETECTADOS:", len(ejercicios_gemini_list))
+        print("====================")
+        for ej in ejercicios_gemini_list:
+            print("  Ejercicio:", ej.get("exercise_number"), "- Pasos:", len(ej.get("solution_steps", [])))
+
+        resultado = None
+
+        if ejercicios_gemini_list:
+            try:
+                ejercicios_analizados = AnalysisServiceGemini.analizar_ejercicios(ejercicios_gemini_list)
+
+                resultados_por_ejercicio = []
+                for ej in ejercicios_analizados:
+                    validacion = ej.get("validacion", {})
+                    resultados_por_ejercicio.append({
+                        "numero": ej.get("numero"),
+                        "pregunta": ej.get("pregunta", ""),
+                        "respuesta": ej.get("respuesta", ""),
+                        "pasos": ej.get("pasos", []),
+                        "validaciones": validacion.get("validaciones", []),
+                        "valido": validacion.get("valido", True),
+                        "analizable": True,
+                        "tipo": "gemini",
+                        "requires_teacher_review": ej.get("requires_teacher_review", False),
+                        "review_reason": ej.get("review_reason", "")
+                    })
+
+                print("\n====================")
+                print("RESULTADOS POR EJERCICIO:", len(resultados_por_ejercicio))
+                print("====================")
+
+                if resultados_por_ejercicio:
+                    resultado = {
+                        "correcto": all(r.get("valido", True) for r in resultados_por_ejercicio),
+                        "resultados_por_ejercicio": resultados_por_ejercicio,
+                        "resultado_pedagogico": {},
+                        "comparacion_modelo": {"coincidencia": 0},
+                        "validaciones_procedimiento": [],
+                        "score_global": 0,
+                        "expresion_original": respuesta_ocr,
+                        "expresion_normalizada": respuesta_ocr,
+                        "riesgo": "medio",
+                        "perfil_matematico": {},
+                    }
+
+            except Exception as e:
+                print("ERROR AnalysisServiceGemini:", str(e))
+                import traceback
+                traceback.print_exc()
+
+        # Si no hay resultado válido: mostrar datos anteriores si existen
+        if resultado is None or not resultado.get("resultados_por_ejercicio"):
+            examen_previo = ExamenAlumno.query.filter_by(
+                evaluacion_id=evaluacion_id,
+                estudiante_id=estudiante_id,
+                estado='analizado'
+            ).order_by(ExamenAlumno.id.desc()).first()
+
+            if examen_previo:
+                flash(
+                    'El análisis nuevo no pudo extraer ejercicios. '
+                    'Se muestran los resultados anteriores.',
+                    'warning'
                 )
-            )
+                return redirect(url_for('resultados.vista_analisis', evaluacion_id=evaluacion_id))
+            else:
+                flash('No se pudo extraer ejercicios del examen. Verifique la imagen.', 'danger')
+                return redirect(url_for('resultados.vista_analisis', evaluacion_id=evaluacion_id))
 
         # =================================================
-        # VALIDAR ANÁLISIS PREVIO
+        # SOLO AHORA (análisis OK): eliminar registros anteriores
         # =================================================
 
-        examen_existente = ExamenAlumno.query.filter_by(
+        examenes_existentes = ExamenAlumno.query.filter_by(
             evaluacion_id=evaluacion_id,
-            estudiante_id=estudiante_id,
-            estado='analizado'
-        ).first()
+            estudiante_id=estudiante_id
+        ).all()
 
-        if examen_existente:
+        for examen_ant in examenes_existentes:
+            respuestas_ant = RespuestaAlumno.query.filter_by(
+                examen_alumno_id=examen_ant.id
+            ).all()
+            for resp_ant in respuestas_ant:
+                ResultadoAnalisis.query.filter_by(
+                    respuesta_alumno_id=resp_ant.id
+                ).delete()
+                db.session.delete(resp_ant)
+            db.session.delete(examen_ant)
 
-            flash(
-                'Este estudiante ya posee un examen analizado para esta evaluación.',
-                'warning'
-            )
-
-            return redirect(
-                url_for(
-                    'analysis.vista_analisis',
-                    evaluacion_id=evaluacion_id
-                )
-            )
+        db.session.commit()
 
         # =================================================
         # CREAR EXAMEN ALUMNO
@@ -474,56 +535,8 @@ def procesar_analisis():
         print("EXAMEN CREADO:", nuevo_examen.id)
         print("\n=====================")
         print("MODELO EVALUACION")
-        print("modelo_ocr:", bool(evaluacion.modelo_ocr))
-        print("modelo_normalizado:", bool(evaluacion.modelo_normalizado))
         print("procedimiento_modelo:", bool(evaluacion.procedimiento_modelo))
-        print(evaluacion.procedimiento_modelo)
         print("=====================\n")
-
-        # =================================================
-        # EJECUTAR ANÁLISIS
-        # =================================================
-
-        try:
-
-            print("\n====================")
-            print("EJERCICIOS GEMINI")
-            print("====================")
-
-            if resultado_gemini:
-
-                print(
-                    resultado_gemini.get(
-                        "ejercicios"
-                    )
-                )
-
-            print("====================")
-            resultado = AnalysisService.analizar_respuesta(
-                respuesta_ocr=respuesta_ocr,
-                respuesta_correcta=respuesta_correcta,
-                procedimiento_modelo_json=evaluacion.procedimiento_modelo,
-                ejercicios_gemini=resultado_gemini.get("ejercicios")
-            )
-
-        except Exception as e:
-
-            print("ERROR ANALYSIS SERVICE:", str(e))
-
-            import traceback
-            traceback.print_exc()
-
-            resultado = {
-                "correcto": False,
-                "tipo_error": "error_analisis",
-                "descripcion": str(e),
-                "recomendacion": "Revisar OCR",
-                "score_global": 0,
-                "resultado_pedagogico": {},
-                "comparacion_modelo": {},
-                "validaciones_procedimiento": [],
-                "resultados_por_ejercicio": []
-            }
 
         # =============================================
         # TRACE PIPELINE
@@ -646,7 +659,7 @@ def procesar_analisis():
 
         return redirect(
             url_for(
-                'analysis.vista_analisis',
+                'resultados.vista_analisis',
                 evaluacion_id=evaluacion_id
             )
         )
@@ -671,7 +684,7 @@ def procesar_analisis():
 
     return redirect(
         url_for(
-            'analysis.vista_analisis',
+            'resultados.vista_analisis',
             evaluacion_id=evaluacion_id
         )
     )
@@ -720,7 +733,7 @@ def detalle_resultado(resultado_id):
         flash('Resultado no encontrado.', 'danger')
 
         return redirect(
-            url_for('analysis.historial_resultados')
+            url_for('resultados.historial_resultados')
         )
 
     import json
@@ -797,17 +810,29 @@ def generar_pdf(resultado_id):
         flash('Resultado no encontrado.', 'danger')
 
         return redirect(
-            url_for('analysis.historial_resultados')
+            url_for('resultados.historial_resultados')
         )
 
-    ruta_pdf = f'reportes/reporte_{resultado.id}.pdf'
+    import os
+
+    base_dir = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), '..', '..', 'reportes')
+    )
+
+    os.makedirs(base_dir, exist_ok=True)
+
+    ruta_pdf = os.path.join(base_dir, f'reporte_{resultado.id}.pdf')
 
     PDFReportService.generar_reporte(
         resultado=resultado,
         ruta_pdf=ruta_pdf
     )
 
-    return send_file(ruta_pdf, as_attachment=True)
+    return send_file(
+        ruta_pdf,
+        as_attachment=True,
+        download_name=f'reporte_alumno_{resultado.id}.pdf'
+    )
 
 
 # =========================================================
@@ -852,13 +877,44 @@ def obtener_resultado(estudiante_id, evaluacion_id):
     if not examen:
         return jsonify({'success': False, 'message': 'Sin examen'})
 
-    respuesta = RespuestaAlumno.query.filter_by(
+    # Traer TODAS las respuestas del examen (puede haber una por ejercicio)
+    respuestas = RespuestaAlumno.query.filter_by(
         examen_alumno_id=examen.id
-    ).first()
+    ).order_by(RespuestaAlumno.id.asc()).all()
 
-    if not respuesta:
+    if not respuestas:
         return jsonify({'success': False, 'message': 'Sin respuesta'})
 
+    # Usar la primera respuesta como referencia para datos generales
+    respuesta = respuestas[0]
+
+    import json
+
+    procedimiento = []
+
+    for resp in respuestas:
+
+        resultado_resp = ResultadoAnalisis.query.filter_by(
+            respuesta_alumno_id=resp.id
+        ).first()
+
+        if not resultado_resp or not resultado_resp.detalle_procedimiento:
+            continue
+
+        try:
+            data = json.loads(resultado_resp.detalle_procedimiento)
+
+            # Si es lista (formato procesar_analisis) → extender
+            if isinstance(data, list):
+                procedimiento.extend(data)
+            # Si es dict con un ejercicio (formato subir_examen) → agregar
+            elif isinstance(data, dict):
+                procedimiento.append(data)
+
+        except Exception as e:
+            print("ERROR JSON PROCEDIMIENTO:", e)
+
+    # Si no hay ningún resultado aún
     resultado = ResultadoAnalisis.query.filter_by(
         respuesta_alumno_id=respuesta.id
     ).first()
@@ -866,36 +922,9 @@ def obtener_resultado(estudiante_id, evaluacion_id):
     if not resultado:
         return jsonify({'success': False, 'message': 'Sin análisis'})
 
-    import json
-
-    procedimiento = []
-
-    try:
-
-        if resultado.detalle_procedimiento:
-
-            print("\n======================")
-            print("DETALLE PROCEDIMIENTO")
-            print("======================")
-            print(resultado.detalle_procedimiento)
-            print("======================")
-
-            procedimiento = json.loads(resultado.detalle_procedimiento)
-
-            print("\n======================")
-            print("PROCEDIMIENTO DECODIFICADO")
-            print("======================")
-
-            for item in procedimiento:
-
-                print(item)
-
-            print("======================")
-
-    except Exception as e:
-
-        print("ERROR JSON PROCEDIMIENTO:", e)
-        procedimiento = []
+    print("\n======================")
+    print("TOTAL EJERCICIOS CARGADOS:", len(procedimiento))
+    print("======================")
 
     # =====================================
     # CONSERVAR ESTRUCTURA POR EJERCICIO

@@ -13,7 +13,7 @@
 
     <title>
 
-        TAMARA
+        I.E Elvira García Y García
 
     </title>
 
@@ -706,10 +706,10 @@ active
 
 
         <a
-            href="{{ url_for('analysis.vista_analisis') }}"
+            href="{{ url_for('resultados.vista_analisis') }}"
             class="
 sidebar-link
-{% if request.path.startswith('/resultados') %}
+{% if request.path.startswith('/resultados/analizar') %}
 active
 {% endif %}
 "
@@ -723,8 +723,13 @@ active
 
 
         <a
-            href="{{ url_for('analysis.historial_resultados') }}"
-            class="sidebar-link"
+            href="{{ url_for('resultados.historial_resultados') }}"
+            class="
+sidebar-link
+{% if request.path.startswith('/resultados/historial') %}
+active
+{% endif %}
+"
         >
 
             <i class="bi bi-clock-history"></i>
@@ -744,8 +749,13 @@ active
 
 
         <a
-            href="#"
-            class="sidebar-link"
+            href="{{ url_for('reportes.lista_reportes') }}"
+            class="
+sidebar-link
+{% if request.path.startswith('/reportes') %}
+active
+{% endif %}
+"
         >
 
             <i class="bi bi-bar-chart"></i>
@@ -860,6 +870,8 @@ active
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% block scripts %}{% endblock %}
 
 </body>
 

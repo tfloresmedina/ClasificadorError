@@ -72,6 +72,8 @@ from app.models.evaluacion import (
     Evaluacion
 )
 
+import json
+
 from app.services.ocr_service import (
     OCRService
 )
@@ -84,6 +86,14 @@ from app.models.resultado_analisis import (
     ResultadoAnalisis
 )
 
+from app.services.gemini_exam_service import (
+    GeminiExamService
+)
+
+from app.services.analysis_service_gemini import (
+    AnalysisServiceGemini
+)
+
 from app.database.connection import db
 
 docente_bp = Blueprint(
@@ -94,6 +104,8 @@ docente_bp = Blueprint(
 
 
 @docente_bp.route('/')
+@login_required
+@role_required('administrador', 'docente')
 def listar():
 
     docentes = (
@@ -110,6 +122,8 @@ def listar():
     '/crear',
     methods=['GET', 'POST']
 )
+@login_required
+@role_required('administrador')
 def crear():
 
     if request.method == 'POST':
@@ -160,6 +174,8 @@ def detalle(id):
     '/editar/<int:id>',
     methods=['GET', 'POST']
 )
+@login_required
+@role_required('administrador')
 def editar(id):
 
     docente = (
@@ -205,6 +221,8 @@ def editar(id):
     '/eliminar/<int:id>',
     methods=['POST']
 )
+@login_required
+@role_required('administrador')
 def eliminar(id):
 
     docente = (
@@ -823,82 +841,134 @@ def subir_examen(
         db.session.commit()
 
                 # =============================================
-        # OCR
+        # GEMINI: EXTRACCIÓN DE EJERCICIOS
         # =============================================
 
-        resultado_ocr = (
+        resultado_gemini = (
 
-            OCRService
-            .extraer_texto(
+            GeminiExamService
+            .extraer_ejercicios(
                 ruta
             )
         )
 
+        if not resultado_gemini.get('valido'):
 
-        texto_ocr = (
+            flash(
 
-            resultado_ocr.get(
-                'texto',
-                ''
+                resultado_gemini.get(
+                    'error',
+                    'No se pudo procesar el examen.'
+                ),
+
+                'danger'
+            )
+
+            return redirect(request.url)
+
+        ejercicios = resultado_gemini.get(
+            'ejercicios', []
+        )
+
+        if not ejercicios:
+
+            flash(
+                'No se detectaron ejercicios en el examen.',
+                'warning'
+            )
+
+            return redirect(
+                url_for(
+                    'docentes.detalle_evaluacion',
+                    evaluacion_id=evaluacion.id
+                )
+            )
+
+        # =============================================
+        # ANÁLISIS DE EJERCICIOS (GEMINI)
+        # =============================================
+
+        resultados_ejercicios = (
+
+            AnalysisServiceGemini
+            .analizar_ejercicios(
+                ejercicios
             )
         )
-        
+
         # =============================================
-        # NORMALIZACIÓN
+        # GUARDAR RESULTADOS POR EJERCICIO
         # =============================================
 
-        expresion_normalizada = (
+        for resultado_ejercicio in resultados_ejercicios:
 
-            MathNormalizerService
-            .normalizar_expresion(
-
-                texto_ocr
+            pasos_texto = "\n".join(
+                resultado_ejercicio.get('pasos', [])
             )
-        )
 
-        # =============================================
-        # ANALYSIS SERVICE
-        # =============================================
-
-        resultado_analisis = (
-
-            AnalysisService
-            .analizar_respuesta(
-
-
-                respuesta_estudiante=
-                    expresion_normalizada,
-
-
-                respuesta_correcta=
-
-                    evaluacion
-                    .modelo_normalizado
+            validacion = resultado_ejercicio.get(
+                'validacion', {}
             )
-        )
 
-        # =============================================
-        # SAVE ANALYSIS
-        # =============================================
+            requiere_revision = resultado_ejercicio.get(
+                'requires_teacher_review', False
+            )
 
-        SaveAnalysisService.salvar_resultado(
+            motivo_revision = resultado_ejercicio.get(
+                'review_reason', ''
+            )
 
+            respuesta_alumno = RespuestaAlumno(
 
-            estudiante=
-                estudiante,
+                imagen_respuesta=ruta,
 
+                texto_ocr=pasos_texto,
 
-            resultado=
-                resultado_analisis,
+                expresion_detectada=resultado_ejercicio.get(
+                    'pregunta', ''
+                ),
 
+                expresion_normalizada=pasos_texto,
 
-            respuesta_original=
-                texto_ocr,
+                estado_ocr='procesado',
 
+                examen_alumno_id=examen.id
+            )
 
-            respuesta_normalizada=
-                expresion_normalizada
-        )
+            db.session.add(respuesta_alumno)
+            db.session.flush()
+
+            nuevo_resultado = ResultadoAnalisis(
+
+                expresion_original=resultado_ejercicio.get(
+                    'pregunta', ''
+                ),
+
+                expresion_procesada=pasos_texto,
+
+                es_correcto=validacion.get('valido', False),
+
+                estado_analisis=(
+                    'requiere_revision'
+                    if requiere_revision
+                    else 'procesado'
+                ),
+
+                descripcion_error=motivo_revision or validacion.get(
+                    'motivo', ''
+                ),
+
+                detalle_procedimiento=json.dumps(
+                    resultado_ejercicio,
+                    ensure_ascii=False
+                ),
+
+                respuesta_alumno_id=respuesta_alumno.id
+            )
+
+            db.session.add(nuevo_resultado)
+
+        db.session.commit()
 
         flash(
 

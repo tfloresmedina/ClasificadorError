@@ -92,11 +92,17 @@ class DashboardService:
                 )
 
             )
-
+            .filter(
+                ResultadoAnalisis.tipo_error.isnot(None),
+                ResultadoAnalisis.tipo_error != ''
+            )
             .group_by(
                 ResultadoAnalisis.tipo_error
             )
-
+            .order_by(
+                func.count(ResultadoAnalisis.id).desc()
+            )
+            .limit(8)
             .all()
         )
 
@@ -196,7 +202,19 @@ class DashboardService:
 
         return {
 
-                        'severidad_errores':
+            'total_errores':
+                total_incorrectos,
+
+            'total_estudiantes':
+                db.session.query(
+                    func.count(
+                        func.distinct(
+                            ResultadoAnalisis.respuesta_alumno_id
+                        )
+                    )
+                ).scalar() or 0,
+
+            'severidad_errores':
                 severidad_errores,
 
             'competencias':

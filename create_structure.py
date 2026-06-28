@@ -157,4 +157,4 @@ for file in root_files:
 open("app/__init__.py", "w").close()
 open("app/config.py", "w").close()
 
-print("✅ Estructura TAMARA creada correctamente")
+print("✅ Estructura I.E Elvira García Y García creada correctamente")

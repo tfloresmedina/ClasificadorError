@@ -30,7 +30,12 @@ class GeminiExamService:
             prompt = """
 Eres un experto en análisis de exámenes matemáticos escolares.
 
-Analiza el examen resuelto y extrae cada ejercicio.
+Analiza el examen resuelto y extrae CADA EJERCICIO POR SEPARADO.
+
+REGLA FUNDAMENTAL: Si el examen tiene 8 ejercicios, debes devolver 8 objetos JSON.
+Si tiene 5 ejercicios, devuelve 5 objetos. NUNCA combines ejercicios distintos en uno solo.
+Cada número de ejercicio visible en el papel (1, 2, 3, 4, 5, 6, 7, 8...) debe generar
+un objeto JSON independiente.
 
 IMPORTANTE:
 
@@ -135,24 +140,6 @@ REGLAS CRÍTICAS:
 - Si observas 3/8 debes devolver 3/8.
 - Está prohibido sustituir fracciones o números.
 
-Si el ejercicio contiene una única operación compuesta, descompón la resolución en pasos matemáticos equivalentes.
-
-Ejemplo:
-
-17/20 - 6/10
-
-↓
-
-17/20 - 12/20
-
-↓
-
-5/20
-
-↓
-
-1/4
-
 17. Mantén completas todas las comparaciones matemáticas.
 
 CORRECTO:
@@ -198,14 +185,21 @@ INCORRECTO:
     "√",
     "16"
 ]
-19. No devuelvas números o fracciones aisladas como pasos matemáticos.
-
-Cada elemento de "solution_steps" debe representar una operación,
+19. Cada elemento de "solution_steps" debe representar una operación,
 transformación, comparación o conclusión completa.
+
+Si el alumno escribió una sola operación, incluye ese único paso en "solution_steps".
+No dejes "solution_steps" vacío si hay contenido matemático visible.
 
 Si no es posible reconstruir la expresión completa:
 
 "requires_teacher_review": true
+
+20. TRANSCRIPCIÓN ESTRICTA: Solo incluye en "solution_steps" los pasos
+que el alumno ESCRIBIÓ FÍSICAMENTE en el papel. Si el alumno escribió
+2 líneas, devuelve exactamente 2 pasos. NO generes pasos intermedios,
+NO deduzcas pasos implícitos, NO descompongas operaciones que el alumno
+realizó en un solo paso. Un paso no escrito por el alumno NO debe aparecer.
 
 """
             with open(
