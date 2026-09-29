@@ -25,13 +25,18 @@ estudiante_bp = Blueprint(
 @estudiante_bp.route('/')
 def listar():
 
+    busqueda = request.args.get('q', '').strip()
+
     estudiantes = (
-        EstudianteService.listar_estudiantes()
+        EstudianteService.listar_estudiantes(
+            busqueda
+        )
     )
 
     return render_template(
         'estudiantes/listar.html',
-        estudiantes=estudiantes
+        estudiantes=estudiantes,
+        busqueda=busqueda
     )
 
 

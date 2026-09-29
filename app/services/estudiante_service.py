@@ -7,9 +7,27 @@ class EstudianteService:
 
 
     @staticmethod
-    def listar_estudiantes():
+    def listar_estudiantes(busqueda=None):
 
-        return Estudiante.query.order_by(
+        query = Estudiante.query
+
+        if busqueda:
+
+            # Cada palabra debe coincidir con el código,
+            # los nombres o los apellidos del estudiante.
+            for termino in busqueda.split():
+
+                patron = f'%{termino}%'
+
+                query = query.filter(
+                    db.or_(
+                        Estudiante.codigo.ilike(patron),
+                        Estudiante.nombres.ilike(patron),
+                        Estudiante.apellidos.ilike(patron)
+                    )
+                )
+
+        return query.order_by(
             Estudiante.apellidos.asc()
         ).all()
 

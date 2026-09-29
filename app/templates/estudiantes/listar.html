@@ -28,6 +28,56 @@
 </div>
 
 
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-body">
+
+        <form method="GET"
+              action="{{ url_for('estudiantes.listar') }}"
+              class="d-flex gap-2">
+
+            <div class="input-group">
+
+                <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input type="text"
+                       id="buscarEstudiante"
+                       name="q"
+                       value="{{ busqueda }}"
+                       class="form-control"
+                       placeholder="Buscar por código, nombres o apellidos..."
+                       autocomplete="off"
+                       autofocus>
+
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Buscar
+            </button>
+
+            {% if busqueda %}
+
+                <a href="{{ url_for('estudiantes.listar') }}"
+                   class="btn btn-outline-secondary">
+                    Limpiar
+                </a>
+
+            {% endif %}
+
+        </form>
+
+        <small class="text-muted d-block mt-2">
+            <span id="contadorEstudiantes">{{ estudiantes|length }}</span>
+            estudiante(s) encontrado(s)
+        </small>
+
+    </div>
+
+</div>
+
+
 <div class="card shadow-sm border-0">
 
     <div class="card-body">
@@ -58,7 +108,7 @@
 
             {% for estudiante in estudiantes %}
 
-                <tr>
+                <tr class="fila-estudiante">
 
                     <td>
                         {{ estudiante.codigo }}
@@ -129,6 +179,15 @@
 
             {% endfor %}
 
+                <tr id="sinResultados"
+                    {% if estudiantes %}style="display: none;"{% endif %}>
+
+                    <td colspan="6" class="text-center text-muted py-4">
+                        No se encontraron estudiantes.
+                    </td>
+
+                </tr>
+
             </tbody>
 
         </table>
@@ -136,5 +195,60 @@
     </div>
 
 </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+    // Filtro instantáneo mientras se escribe
+    // (el botón Buscar consulta al servidor).
+    (function () {
+
+        const input = document.getElementById('buscarEstudiante');
+        const filas = document.querySelectorAll('.fila-estudiante');
+        const contador = document.getElementById('contadorEstudiantes');
+        const sinResultados = document.getElementById('sinResultados');
+
+        const normalizar = (texto) => texto
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/\p{Diacritic}/gu, '');
+
+        input.addEventListener('input', function () {
+
+            const terminos = normalizar(this.value)
+                .split(/\s+/)
+                .filter(Boolean);
+
+            let visibles = 0;
+
+            filas.forEach(function (fila) {
+
+                const texto = normalizar(
+                    fila.cells[0].textContent + ' ' +
+                    fila.cells[1].textContent
+                );
+
+                const coincide = terminos.every(
+                    (termino) => texto.includes(termino)
+                );
+
+                fila.style.display = coincide ? '' : 'none';
+
+                if (coincide) visibles++;
+
+            });
+
+            contador.textContent = visibles;
+            sinResultados.style.display = visibles ? 'none' : '';
+
+        });
+
+    })();
+
+</script>
 
 {% endblock %}
